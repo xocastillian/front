@@ -1,12 +1,14 @@
-// src/lib/api/auth.ts
 import api from './axios'
 import { AxiosError } from 'axios'
 import { RegisterFormData } from '@/lib/validation/registerSchema'
 import { LoginFormData } from '@/lib/validation/loginSchema'
+import { useAuthStore } from '@/stores/auth-store'
 
 export async function registerUser(data: RegisterFormData): Promise<boolean> {
 	try {
-		await api.post('/users/register', data)
+		const res = await api.post('/users/register', data)
+		const authStore = useAuthStore.getState()
+		authStore.login({ name: data.name, email: data.email, phone: data.phone }, res.data.access_token)
 		return true
 	} catch (error) {
 		const err = error as AxiosError<{ message?: string; error?: string }>
@@ -19,8 +21,9 @@ export async function registerUser(data: RegisterFormData): Promise<boolean> {
 export async function loginUser(data: LoginFormData): Promise<boolean> {
 	try {
 		const res = await api.post('/auth/login', data)
-		const { access_token } = res.data
-		localStorage.setItem('token', access_token)
+		const { access_token, user } = res.data
+		const authStore = useAuthStore.getState()
+		authStore.login(user, access_token)
 		return true
 	} catch (error) {
 		const err = error as AxiosError<{ message?: string; error?: string }>
