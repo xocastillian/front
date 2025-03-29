@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import api from '@/lib/api/axios'
 import { ProductList } from '@/components/ProductList/ProductList'
-import { Product } from '@/types/product'
+import { Product } from '@/types'
 
 export default function Home() {
 	const [products, setProducts] = useState<Product[]>([])
@@ -20,6 +20,7 @@ export default function Home() {
 				setLoading(false)
 			}
 		}
+
 		fetchProducts()
 	}, [])
 

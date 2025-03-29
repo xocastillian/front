@@ -1,5 +1,15 @@
 import { z } from 'zod'
 
+export const RegisterResponseSchema = z.object({
+	user: z.object({
+		name: z.string(),
+		email: z.string(),
+		phone: z.string(),
+	}),
+	access_token: z.string(),
+	refresh_token: z.string(),
+})
+
 export const registerSchema = z.object({
 	name: z.string().min(2, 'Введите имя'),
 	email: z.string().email('Введите корректный email'),

@@ -1,15 +1,16 @@
 'use client'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Product } from '@/types/product'
+import { Product } from '@/types'
 
 interface ProductCardProps {
 	product: Product
+	onClick?: () => void
 }
 
-export function ProductCard({ product }: ProductCardProps) {
+export function ProductCard({ product, onClick }: ProductCardProps) {
 	return (
-		<Card className='hover:shadow-md transition-shadow'>
+		<Card className='hover:shadow-md transition-shadow cursor-pointer' onClick={onClick}>
 			<CardHeader>
 				<CardTitle>{product.name}</CardTitle>
 			</CardHeader>

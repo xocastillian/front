@@ -11,9 +11,10 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 
 type Props = {
 	onSubmit: (data: LoginFormData) => void
+	isLoading?: boolean
 }
 
-export function LoginForm({ onSubmit }: Props) {
+export function LoginForm({ onSubmit, isLoading }: Props) {
 	const form = useForm<LoginFormData>({
 		resolver: zodResolver(loginSchema),
 		defaultValues: {
@@ -56,7 +57,7 @@ export function LoginForm({ onSubmit }: Props) {
 								</FormItem>
 							)}
 						/>
-						<Button type='submit' className='w-full'>
+						<Button type='submit' className='w-full' disabled={isLoading}>
 							Войти
 						</Button>
 					</form>

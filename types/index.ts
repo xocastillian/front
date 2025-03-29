@@ -5,3 +5,9 @@ export interface Product {
 	price: number
 	imageUrl?: string
 }
+
+export interface RawCartItem {
+	productId: string
+	quantity: number
+	_id: string
+}
