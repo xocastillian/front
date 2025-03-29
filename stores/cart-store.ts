@@ -24,7 +24,7 @@ export const useCartStore = create<CartState>((set, get) => ({
 		try {
 			const res = await api.get('/cart')
 			const items: RawCartItem[] = res.data.items || []
-			const count = items.reduce((acc, item) => acc + item.quantity, 0)
+			const count = items.length
 			set({ items: items as unknown as CartItem[], cartItemCount: count })
 		} catch (err) {
 			console.error('Ошибка при получении корзины:', err)

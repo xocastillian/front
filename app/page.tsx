@@ -7,26 +7,40 @@ import { Product } from '@/types'
 
 export default function Home() {
 	const [products, setProducts] = useState<Product[]>([])
-	const [loading, setLoading] = useState(true)
+	const [page, setPage] = useState(1)
+	const [loading, setLoading] = useState(false)
+	const [hasMore, setHasMore] = useState(true)
+	const limit = 10
+
+	const fetchProducts = async (page: number) => {
+		setLoading(true)
+		try {
+			const res = await api.get(`/products?page=${page}&limit=${limit}`)
+			const newProducts: Product[] = res.data
+			setProducts(prev => [...prev, ...newProducts])
+			if (newProducts.length < limit) {
+				setHasMore(false)
+			}
+		} catch (err) {
+			console.error('Ошибка при получении продуктов:', err)
+		} finally {
+			setLoading(false)
+		}
+	}
 
 	useEffect(() => {
-		const fetchProducts = async () => {
-			try {
-				const res = await api.get('/products')
-				setProducts(res.data)
-			} catch (err) {
-				console.error('Ошибка при получении продуктов:', err)
-			} finally {
-				setLoading(false)
-			}
-		}
-
-		fetchProducts()
+		fetchProducts(1)
 	}, [])
+
+	const handleLoadMore = () => {
+		const nextPage = page + 1
+		setPage(nextPage)
+		fetchProducts(nextPage)
+	}
 
 	return (
 		<main className='px-6 py-14'>
-			<ProductList products={products} loading={loading} />
+			<ProductList products={products} loading={loading} onLoadMore={handleLoadMore} hasMore={hasMore} />
 		</main>
 	)
 }

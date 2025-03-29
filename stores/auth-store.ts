@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import api from '@/lib/api/axios'
+import { refreshClient } from '@/lib/api/axios'
 
 interface User {
 	name: string
@@ -55,14 +55,10 @@ export const useAuthStore = create<AuthState>(set => ({
 
 	refreshAccessToken: async () => {
 		const refreshToken = localStorage.getItem('refreshToken')
-		const user = useAuthStore.getState().user
-		const userId = useAuthStore.getState().user?.id
-
-		if (!refreshToken || !user?.email) return
+		if (!refreshToken) return
 
 		try {
-			const res = await api.post('/users/refresh', {
-				userId,
+			const res = await refreshClient.post('/auth/refresh', {
 				refreshToken,
 			})
 			const { access_token } = res.data

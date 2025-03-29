@@ -1,8 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
-import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { ShoppingCart } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
@@ -12,14 +11,8 @@ import { useCartStore } from '@/stores/cart-store'
 
 export default function Header() {
 	const router = useRouter()
-	const pathname = usePathname()
-	const { isAuthenticated, user, logout, initializeFromStorage } = useAuthStore()
-	const { cartItemCount, fetchCart } = useCartStore()
-
-	useEffect(() => {
-		initializeFromStorage()
-		if (isAuthenticated) fetchCart()
-	}, [pathname, isAuthenticated, fetchCart, initializeFromStorage])
+	const { isAuthenticated, user, logout } = useAuthStore()
+	const { cartItemCount } = useCartStore()
 
 	return (
 		<header className='fixed top-0 left-0 right-0 z-50 bg-white border-b shadow-sm px-6 py-4 flex items-center justify-between'>

@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect } from 'react'
-import { setupInterceptors } from '@/lib/api/interceptors'
 import { useAuthStore } from '@/stores/auth-store'
 import { useCartStore } from '@/stores/cart-store'
 
@@ -12,7 +11,6 @@ export function AppInitializer() {
 
 	useEffect(() => {
 		initialize()
-		setupInterceptors()
 	}, [])
 
 	useEffect(() => {

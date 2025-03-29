@@ -4,6 +4,7 @@ export interface Product {
 	description: string
 	price: number
 	imageUrl?: string
+	options?: string[]
 }
 
 export interface RawCartItem {
