@@ -4,6 +4,7 @@ import api from '@/lib/api/axios'
 
 export interface CartItem extends Product {
 	quantity: number
+	_id: string
 }
 
 interface CartState {
@@ -11,7 +12,8 @@ interface CartState {
 	cartItemCount: number
 	fetchCart: () => Promise<void>
 	addToCart: (item: CartItem) => Promise<void>
-	removeFromCart: (id: string) => void
+	updateQuantity: (id: string, quantity: number) => Promise<void>
+	removeFromCart: (id: string) => Promise<void>
 	clearCart: () => void
 	totalPrice: () => number
 }
@@ -23,9 +25,18 @@ export const useCartStore = create<CartState>((set, get) => ({
 	fetchCart: async () => {
 		try {
 			const res = await api.get('/cart')
-			const items: RawCartItem[] = res.data.items || []
-			const count = items.length
-			set({ items: items as unknown as CartItem[], cartItemCount: count })
+			const rawItems: RawCartItem[] = res.data.items || []
+
+			const items: CartItem[] = rawItems.map(item => ({
+				...item.productId,
+				quantity: item.quantity,
+				_id: item._id,
+			}))
+
+			set({
+				items,
+				cartItemCount: items.length,
+			})
 		} catch (err) {
 			console.error('Ошибка при получении корзины:', err)
 		}
@@ -37,10 +48,10 @@ export const useCartStore = create<CartState>((set, get) => ({
 				productId: item._id,
 				quantity: item.quantity,
 			})
-			get().fetchCart()
+			await get().fetchCart()
 		} catch (err) {
 			console.error('Ошибка при добавлении в корзину:', err)
-			// В оффлайн-режиме (неавторизован) добавляем в локальный стор
+
 			set(state => {
 				const existingItem = state.items.find(i => i._id === item._id)
 				const updatedItems = existingItem
@@ -49,23 +60,42 @@ export const useCartStore = create<CartState>((set, get) => ({
 
 				return {
 					items: updatedItems,
-					cartItemCount: updatedItems.reduce((acc, i) => acc + i.quantity, 0),
+					cartItemCount: updatedItems.length,
 				}
 			})
 		}
 	},
 
-	removeFromCart: id => {
-		set(state => {
-			const updated = state.items.filter(item => item._id !== id)
-			return {
-				items: updated,
-				cartItemCount: updated.reduce((acc, i) => acc + i.quantity, 0),
-			}
-		})
+	updateQuantity: async (id, quantity) => {
+		if (quantity < 1) return
+		try {
+			await api.patch(`/cart/items/${id}`, { quantity })
+			await get().fetchCart()
+		} catch (err) {
+			console.error('Ошибка при обновлении количества:', err)
+		}
 	},
 
-	clearCart: () => set({ items: [], cartItemCount: 0 }),
+	removeFromCart: async id => {
+		try {
+			await api.delete(`/cart/items/${id}`)
+			await get().fetchCart()
+		} catch (err) {
+			console.error('Ошибка при удалении из корзины:', err)
+		}
+	},
 
-	totalPrice: () => get().items.reduce((acc, item) => acc + item.price * item.quantity, 0),
+	totalPrice: () => {
+		const sum = get().items.reduce((acc, item) => acc + item.price * item.quantity, 0)
+		return parseFloat(sum.toFixed(2))
+	},
+
+	clearCart: async () => {
+		try {
+			await api.delete('/cart')
+			get().fetchCart()
+		} catch (err) {
+			console.error('Ошибка при очистке корзины:', err)
+		}
+	},
 }))

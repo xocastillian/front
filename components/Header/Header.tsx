@@ -5,13 +5,16 @@ import { useRouter } from 'next/navigation'
 import { ShoppingCart } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { NavigationMenu, NavigationMenuItem, NavigationMenuList } from '@/components/ui/navigation-menu'
 import { useAuthStore } from '@/stores/auth-store'
 import { useCartStore } from '@/stores/cart-store'
+import { useProfileStore } from '@/stores/profile-store'
+import { useState } from 'react'
 
 export default function Header() {
+	const [open, setOpen] = useState(false)
 	const router = useRouter()
-	const { isAuthenticated, user, logout } = useAuthStore()
+	const { isAuthenticated, logout } = useAuthStore()
+	const { profile } = useProfileStore()
 	const { cartItemCount } = useCartStore()
 
 	return (
@@ -20,27 +23,6 @@ export default function Header() {
 			<Link href='/' className='text-xl font-bold'>
 				FoodApp
 			</Link>
-
-			{/* Меню */}
-			<NavigationMenu>
-				<NavigationMenuList>
-					<NavigationMenuItem>
-						<Link href='/' className='px-4 py-2'>
-							Главная
-						</Link>
-					</NavigationMenuItem>
-					<NavigationMenuItem>
-						<Link href='/products' className='px-4 py-2'>
-							Продукты
-						</Link>
-					</NavigationMenuItem>
-					<NavigationMenuItem>
-						<Link href='/categories' className='px-4 py-2'>
-							Категории
-						</Link>
-					</NavigationMenuItem>
-				</NavigationMenuList>
-			</NavigationMenu>
 
 			{/* Аккаунт и корзина */}
 			<div className='flex items-center gap-4'>
@@ -56,11 +38,21 @@ export default function Header() {
 				)}
 
 				{isAuthenticated ? (
-					<Popover>
+					<Popover open={open} onOpenChange={setOpen}>
 						<PopoverTrigger asChild>
-							<Button variant='ghost'>{user?.name || 'Аккаунт'}</Button>
+							<Button variant='ghost'>{profile?.name || 'Аккаунт'}</Button>
 						</PopoverTrigger>
 						<PopoverContent className='w-40 space-y-2'>
+							<Button
+								variant='outline'
+								onClick={() => {
+									setOpen(false)
+									router.push('/profile')
+								}}
+								className='w-full'
+							>
+								Профиль
+							</Button>
 							<Button variant='destructive' onClick={logout} className='w-full text-white'>
 								Выйти
 							</Button>

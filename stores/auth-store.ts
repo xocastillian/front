@@ -5,7 +5,7 @@ interface User {
 	name: string
 	email: string
 	phone: string
-	id?: string
+	_id?: string
 }
 
 interface AuthState {
@@ -37,6 +37,7 @@ export const useAuthStore = create<AuthState>(set => ({
 		localStorage.removeItem('refreshToken')
 		localStorage.removeItem('user')
 		set({ isAuthenticated: false, user: null, accessToken: null, refreshToken: null })
+		window.location.href = '/'
 	},
 
 	initializeFromStorage: () => {

@@ -1,13 +1,14 @@
 import { z } from 'zod'
 
 export const LoginResponseSchema = z.object({
+	access_token: z.string(),
+	refresh_token: z.string(),
 	user: z.object({
+		_id: z.string(),
 		name: z.string(),
 		email: z.string(),
 		phone: z.string(),
 	}),
-	access_token: z.string(),
-	refresh_token: z.string(),
 })
 
 export const loginSchema = z.object({

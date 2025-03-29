@@ -17,7 +17,16 @@ export default function Home() {
 		try {
 			const res = await api.get(`/products?page=${page}&limit=${limit}`)
 			const newProducts: Product[] = res.data
-			setProducts(prev => [...prev, ...newProducts])
+
+			setProducts(prev => {
+				const merged = [...prev, ...newProducts]
+				const uniqueMap = new Map<string, Product>()
+				for (const p of merged) {
+					uniqueMap.set(p._id, p)
+				}
+				return Array.from(uniqueMap.values())
+			})
+
 			if (newProducts.length < limit) {
 				setHasMore(false)
 			}

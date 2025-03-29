@@ -8,7 +8,15 @@ export interface Product {
 }
 
 export interface RawCartItem {
-	productId: string
+	productId: Product
 	quantity: number
 	_id: string
+}
+
+export interface Profile {
+	_id: string
+	name: string
+	email: string
+	phone: string
+	role?: string
 }
