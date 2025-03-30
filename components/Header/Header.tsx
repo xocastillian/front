@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { ShoppingCart } from 'lucide-react'
+import { PackageCheck, ShoppingCart } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { useAuthStore } from '@/stores/auth-store'
@@ -26,16 +26,18 @@ export default function Header() {
 
 			{/* Аккаунт и корзина */}
 			<div className='flex items-center gap-4'>
-				{isAuthenticated && (
-					<Button variant='ghost' onClick={() => router.push('/cart')} className='relative'>
-						<ShoppingCart className='h-5 w-5' />
-						{cartItemCount > 0 && (
-							<span className='absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center'>
-								{cartItemCount}
-							</span>
-						)}
-					</Button>
-				)}
+				<Button variant='ghost' onClick={() => router.push('/cart')} className='relative'>
+					<ShoppingCart className='h-5 w-5' />
+					{cartItemCount > 0 && (
+						<span className='absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center'>
+							{cartItemCount}
+						</span>
+					)}
+				</Button>
+
+				<Button variant='ghost' onClick={() => router.push('/orders')}>
+					<PackageCheck className='h-5 w-5' />
+				</Button>
 
 				{isAuthenticated ? (
 					<Popover open={open} onOpenChange={setOpen}>

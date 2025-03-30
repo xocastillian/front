@@ -13,6 +13,7 @@ export function AppInitializer() {
 
 	useEffect(() => {
 		initialize()
+		useCartStore.getState().loadFromStorage()
 	}, [])
 
 	useEffect(() => {

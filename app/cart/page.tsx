@@ -4,6 +4,7 @@ import { useCartStore } from '@/stores/cart-store'
 import { Button } from '@/components/ui/button'
 import { CartItemCard } from '@/components/CartItemCard/CartItemCard'
 import { ConfirmDialog } from '@/components/ConfirmDialog/ConfirmDialog'
+import { OrderForm } from '@/components/forms/order-form'
 
 export default function CartPage() {
 	const { items, totalPrice, clearCart } = useCartStore()
@@ -30,7 +31,7 @@ export default function CartPage() {
 						<CartItemCard key={item._id} item={item} />
 					))}
 
-					<Button className='w-full'>Оформить заказ</Button>
+					{items.length > 0 && <OrderForm />}
 				</div>
 			)}
 		</div>
