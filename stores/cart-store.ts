@@ -97,21 +97,54 @@ export const useCartStore = create<CartState>((set, get) => ({
 	updateQuantity: (id, quantity) => {
 		if (quantity < 1) return
 		set(state => {
-			const updatedItems = state.items.map(i => (i.cartItemId === id ? { ...i, quantity } : i))
+			const updatedItems = state.items.map(i => (i.cartItemId === id || i._id === id ? { ...i, quantity } : i))
 			localStorage.setItem('guest_cart', JSON.stringify(updatedItems))
 			return { items: updatedItems }
 		})
 	},
 
-	removeFromCart: id => {
+	removeFromCart: async id => {
+		const isAuth = useAuthStore.getState().isAuthenticated
+
+		if (isAuth) {
+			try {
+				await api.delete(`/cart/items/${id}`)
+				await get().fetchCart()
+				return
+			} catch (err) {
+				console.error('Ошибка при удалении из серверной корзины:', err)
+			}
+		}
+
 		set(state => {
-			const updatedItems = state.items.filter(i => i.cartItemId !== id)
+			const updatedItems = state.items.filter(i => i.cartItemId !== id && i._id !== id)
 			localStorage.setItem('guest_cart', JSON.stringify(updatedItems))
 			return { items: updatedItems, cartItemCount: updatedItems.length }
 		})
 	},
 
-	clearCart: () => {
+	clearCart: async () => {
+		const isAuth = useAuthStore.getState().isAuthenticated
+
+		if (isAuth) {
+			try {
+				await api.delete('/cart')
+				const res = await api.get('/cart')
+				const rawItems: RawCartItem[] = res.data.items || []
+
+				const items: CartItem[] = rawItems.map(item => ({
+					...item.productId,
+					quantity: item.quantity,
+					cartItemId: item._id,
+				}))
+
+				set({ items, cartItemCount: items.length })
+				return
+			} catch (err) {
+				console.error('Ошибка при очистке серверной корзины:', err)
+			}
+		}
+
 		set({ items: [], cartItemCount: 0 })
 		localStorage.removeItem('guest_cart')
 	},

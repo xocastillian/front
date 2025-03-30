@@ -14,13 +14,13 @@ export const CartItemCard: FC<CartItemCardProps> = ({ item }) => {
 	const updateQuantity = useCartStore(state => state.updateQuantity)
 
 	const handleRemove = () => {
-		removeFromCart(item.cartItemId)
+		removeFromCart(item.cartItemId || item._id)
 	}
 
-	const increment = () => updateQuantity(item.cartItemId, item.quantity + 1)
+	const increment = () => updateQuantity(item.cartItemId || item._id, item.quantity + 1)
 	const decrement = () => {
 		if (item.quantity > 1) {
-			updateQuantity(item.cartItemId, item.quantity - 1)
+			updateQuantity(item.cartItemId || item._id, item.quantity - 1)
 		}
 	}
 
