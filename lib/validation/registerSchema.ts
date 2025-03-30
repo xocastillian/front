@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 export const RegisterResponseSchema = z.object({
 	user: z.object({
+		_id: z.string(),
 		name: z.string(),
 		email: z.string(),
 		phone: z.string(),
