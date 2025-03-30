@@ -14,8 +14,8 @@ interface CartState {
 	cartItemCount: number
 	fetchCart: () => Promise<void>
 	addToCart: (item: CartItem) => Promise<void>
-	updateQuantity: (id: string, quantity: number) => Promise<void>
-	removeFromCart: (id: string) => Promise<void>
+	updateQuantity: (id: string, quantity: number) => void
+	removeFromCart: (id: string) => void
 	clearCart: () => void
 	createOrder: (data: OrderFormData) => Promise<void>
 	totalPrice: () => number
@@ -94,20 +94,8 @@ export const useCartStore = create<CartState>((set, get) => ({
 		})
 	},
 
-	updateQuantity: async (id, quantity) => {
+	updateQuantity: (id, quantity) => {
 		if (quantity < 1) return
-		const isAuth = useAuthStore.getState().isAuthenticated
-
-		if (isAuth) {
-			try {
-				await api.patch(`/cart/items/${id}`, { quantity })
-				await get().fetchCart()
-				return
-			} catch (err) {
-				console.error('Ошибка при обновлении количества:', err)
-			}
-		}
-
 		set(state => {
 			const updatedItems = state.items.map(i => (i.cartItemId === id ? { ...i, quantity } : i))
 			localStorage.setItem('guest_cart', JSON.stringify(updatedItems))
@@ -115,19 +103,7 @@ export const useCartStore = create<CartState>((set, get) => ({
 		})
 	},
 
-	removeFromCart: async id => {
-		const isAuth = useAuthStore.getState().isAuthenticated
-
-		if (isAuth) {
-			try {
-				await api.delete(`/cart/items/${id}`)
-				await get().fetchCart()
-				return
-			} catch (err) {
-				console.error('Ошибка при удалении из серверной корзины:', err)
-			}
-		}
-
+	removeFromCart: id => {
 		set(state => {
 			const updatedItems = state.items.filter(i => i.cartItemId !== id)
 			localStorage.setItem('guest_cart', JSON.stringify(updatedItems))
@@ -135,19 +111,7 @@ export const useCartStore = create<CartState>((set, get) => ({
 		})
 	},
 
-	clearCart: async () => {
-		const isAuth = useAuthStore.getState().isAuthenticated
-
-		if (isAuth) {
-			try {
-				await api.delete('/cart')
-				await get().fetchCart()
-				return
-			} catch (err) {
-				console.error('Ошибка при очистке серверной корзины:', err)
-			}
-		}
-
+	clearCart: () => {
 		set({ items: [], cartItemCount: 0 })
 		localStorage.removeItem('guest_cart')
 	},
@@ -166,7 +130,7 @@ export const useCartStore = create<CartState>((set, get) => ({
 
 		try {
 			await api.post('/orders', orderDto)
-			await get().clearCart()
+			get().clearCart()
 		} catch (err) {
 			console.error('Ошибка при оформлении заказа:', err)
 			throw err

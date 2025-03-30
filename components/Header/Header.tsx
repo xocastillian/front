@@ -35,9 +35,11 @@ export default function Header() {
 					)}
 				</Button>
 
-				<Button variant='ghost' onClick={() => router.push('/orders')}>
-					<PackageCheck className='h-5 w-5' />
-				</Button>
+				{isAuthenticated && (
+					<Button variant='ghost' onClick={() => router.push('/orders')}>
+						<PackageCheck className='h-5 w-5' />
+					</Button>
+				)}
 
 				{isAuthenticated ? (
 					<Popover open={open} onOpenChange={setOpen}>
