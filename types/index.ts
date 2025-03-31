@@ -20,3 +20,12 @@ export interface Profile {
 	phone: string
 	role?: string
 }
+
+export interface Category {
+	_id: string
+	name: string
+	slug: string
+	imageUrl: string
+	createdAt: string
+	updatedAt: string
+}

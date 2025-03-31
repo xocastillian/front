@@ -41,6 +41,12 @@ export default function Header() {
 					</Button>
 				)}
 
+				{isAuthenticated && profile?.role === 'admin' && (
+					<Button variant='outline' onClick={() => router.push('/admin/new')}>
+						Добавить товар
+					</Button>
+				)}
+
 				{isAuthenticated ? (
 					<Popover open={open} onOpenChange={setOpen}>
 						<PopoverTrigger asChild>

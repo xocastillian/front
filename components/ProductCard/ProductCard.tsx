@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Product } from '@/types'
 
@@ -11,6 +12,18 @@ interface ProductCardProps {
 export function ProductCard({ product, onClick }: ProductCardProps) {
 	return (
 		<Card className='hover:shadow-md transition-shadow cursor-pointer' onClick={onClick}>
+			{product.imageUrl && (
+				<div className='relative w-full h-48'>
+					<Image
+						src={product.imageUrl}
+						alt={product.name}
+						fill
+						className='object-cover rounded-t-xl'
+						sizes='(max-width: 768px) 100vw, 33vw'
+						priority={false}
+					/>
+				</div>
+			)}
 			<CardHeader>
 				<CardTitle>{product.name}</CardTitle>
 			</CardHeader>

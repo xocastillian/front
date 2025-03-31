@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Product } from '@/types'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import { useCartStore } from '@/stores/cart-store'
+import { CartItem, useCartStore } from '@/stores/cart-store'
 
 interface ProductModalProps {
 	product: Product
@@ -16,7 +16,8 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
 	const addToCart = useCartStore(state => state.addToCart)
 
 	const handleAddToCart = async () => {
-		await addToCart({ ...product, quantity })
+		const cartItem: CartItem = { ...product, quantity, cartItemId: product._id }
+		await addToCart(cartItem)
 		onClose()
 	}
 

@@ -1,35 +1,37 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import api from '@/lib/api/axios'
-import { ProductList } from '@/components/ProductList/ProductList'
 import { Product } from '@/types'
+import { ProductList } from '@/components/ProductList/ProductList'
+import { fetchCategories } from '@/lib/api/category'
+import { Category } from '@/types'
+import { CategoryTabs } from '@/components/CategoryTabs/CategoryTabs'
+import { fetchProducts } from '@/lib/api/products'
 
 export default function Home() {
 	const [products, setProducts] = useState<Product[]>([])
+	const [categories, setCategories] = useState<Category[]>([])
+	const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
 	const [page, setPage] = useState(1)
 	const [loading, setLoading] = useState(false)
 	const [hasMore, setHasMore] = useState(true)
 	const limit = 10
 
-	const fetchProducts = async (page: number) => {
+	const loadProducts = async (page: number, categoryId?: string) => {
 		setLoading(true)
 		try {
-			const res = await api.get(`/products?page=${page}&limit=${limit}`)
-			const newProducts: Product[] = res.data
+			const newProducts = await fetchProducts(page, limit, categoryId)
 
-			setProducts(prev => {
-				const merged = [...prev, ...newProducts]
-				const uniqueMap = new Map<string, Product>()
-				for (const p of merged) {
-					uniqueMap.set(p._id, p)
-				}
-				return Array.from(uniqueMap.values())
-			})
+			setProducts(
+				page === 1
+					? newProducts
+					: prev => {
+							const merged = [...prev, ...newProducts]
+							return Array.from(new Map(merged.map(p => [p._id, p])).values())
+					  }
+			)
 
-			if (newProducts.length < limit) {
-				setHasMore(false)
-			}
+			if (newProducts.length < limit) setHasMore(false)
 		} catch (err) {
 			console.error('Ошибка при получении продуктов:', err)
 		} finally {
@@ -37,18 +39,27 @@ export default function Home() {
 		}
 	}
 
-	useEffect(() => {
-		fetchProducts(1)
-	}, [])
+	const handleTabClick = (categoryId: string | null) => {
+		setSelectedCategory(categoryId)
+		setPage(1)
+		setHasMore(true)
+		loadProducts(1, categoryId ?? undefined)
+	}
 
 	const handleLoadMore = () => {
 		const nextPage = page + 1
 		setPage(nextPage)
-		fetchProducts(nextPage)
+		loadProducts(nextPage, selectedCategory ?? undefined)
 	}
+
+	useEffect(() => {
+		fetchCategories().then(setCategories)
+		loadProducts(1)
+	}, [])
 
 	return (
 		<main className='px-6 py-14'>
+			<CategoryTabs categories={categories} selectedCategory={selectedCategory} onSelect={handleTabClick} />
 			<ProductList products={products} loading={loading} onLoadMore={handleLoadMore} hasMore={hasMore} />
 		</main>
 	)
