@@ -43,7 +43,7 @@ export default function Header() {
 
 				{isAuthenticated && profile?.role === 'admin' && (
 					<Button variant='outline' onClick={() => router.push('/admin/new')}>
-						Добавить товар
+						Админ панель
 					</Button>
 				)}
 

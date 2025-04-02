@@ -5,7 +5,7 @@ import { Product } from '@/types'
 import { ProductList } from '@/components/ProductList/ProductList'
 import { fetchCategories } from '@/lib/api/category'
 import { Category } from '@/types'
-import { CategoryTabs } from '@/components/CategoryTabs/CategoryTabs'
+import { Tabs } from '@/components/Tabs/Tabs'
 import { fetchProducts } from '@/lib/api/products'
 
 export default function Home() {
@@ -59,7 +59,7 @@ export default function Home() {
 
 	return (
 		<main className='px-6 py-14'>
-			<CategoryTabs categories={categories} selectedCategory={selectedCategory} onSelect={handleTabClick} />
+			<Tabs items={categories.map(c => ({ id: c._id, name: c.name }))} selected={selectedCategory} onSelect={handleTabClick} />
 			<ProductList products={products} loading={loading} onLoadMore={handleLoadMore} hasMore={hasMore} />
 		</main>
 	)

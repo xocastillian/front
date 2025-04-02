@@ -4,13 +4,7 @@ import { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import api from '@/lib/api/axios'
-import { Product } from '@/types'
-
-type OrderItem = {
-	productId: Product
-	quantity: number
-	price: number
-}
+import { OrderItem } from '@/types'
 
 type Order = {
 	_id: string

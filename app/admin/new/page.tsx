@@ -4,25 +4,38 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createCategory, fetchCategories } from '@/lib/api/category'
 import { createProduct } from '@/lib/api/products'
-import { Category } from '@/types'
+import { fetchOrders, updateOrderStatus } from '@/lib/api/orders'
+import { Category, Order, OrderStatus } from '@/types'
 import { CreateProductFormData } from '@/lib/validation/createProductSchema'
 import { CreateCategoryFormData } from '@/lib/validation/createCategorySchema'
-import { CreateProductForm } from '@/components/forms/create-product-form'
-import { CreateCategoryForm } from '@/components/forms/create-category-form'
-import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Sidebar } from '@/components/Sidebar/Sidebar'
+import { getSocket } from '@/lib/api/socket'
+import { CreateTab } from '@/components/CreateTab/CreateTab'
+import { OrdersTab } from '@/components/OrdersTab/OrdersTab'
 
-export default function CreatePage() {
+export default function AdminPanelPage() {
 	const router = useRouter()
 	const [loadingProduct, setLoadingProduct] = useState(false)
 	const [loadingCategory, setLoadingCategory] = useState(false)
 	const [categories, setCategories] = useState<Category[]>([])
-
-	const [openProductModal, setOpenProductModal] = useState(false)
-	const [openCategoryModal, setOpenCategoryModal] = useState(false)
+	const [orders, setOrders] = useState<Order[]>([])
+	const [activeSection, setActiveSection] = useState<'create' | 'orders'>('create')
 
 	useEffect(() => {
 		fetchCategories().then(setCategories)
+	}, [])
+
+	useEffect(() => {
+		fetchOrders().then(setOrders)
+
+		const socket = getSocket()
+		socket.on('order:new', (order: Order) => {
+			setOrders(prev => [order, ...prev])
+		})
+
+		return () => {
+			socket.off('order:new')
+		}
 	}, [])
 
 	const handleProductSubmit = async (data: CreateProductFormData) => {
@@ -43,7 +56,6 @@ export default function CreatePage() {
 			await createCategory(data)
 			const updated = await fetchCategories()
 			setCategories(updated)
-			setOpenCategoryModal(false)
 		} catch (err) {
 			console.error('Ошибка при создании категории:', err)
 		} finally {
@@ -51,29 +63,47 @@ export default function CreatePage() {
 		}
 	}
 
-	return (
-		<div className='max-w-xl mx-auto px-4 py-10 space-y-6'>
-			<Dialog open={openProductModal} onOpenChange={setOpenProductModal}>
-				<DialogTrigger asChild>
-					<Button className='w-full'>Добавить товар</Button>
-				</DialogTrigger>
-				<DialogContent>
-					<DialogTitle>Добавить товар</DialogTitle>
-					<CreateProductForm onSubmit={handleProductSubmit} isLoading={loadingProduct} categories={categories} />
-				</DialogContent>
-			</Dialog>
+	const handleUpdateOrderStatus = async (orderId: string, status: OrderStatus) => {
+		try {
+			const updated = await updateOrderStatus(orderId, status)
+			setOrders(prev => prev.map(o => (o._id === updated._id ? { ...o, status: updated.status } : o)))
+		} catch (err) {
+			console.error('Ошибка при обновлении статуса заказа:', err)
+		}
+	}
 
-			<Dialog open={openCategoryModal} onOpenChange={setOpenCategoryModal}>
-				<DialogTrigger asChild>
-					<Button variant='outline' className='w-full'>
-						Добавить категорию
-					</Button>
-				</DialogTrigger>
-				<DialogContent>
-					<DialogTitle>Добавить категорию</DialogTitle>
-					<CreateCategoryForm onSubmit={handleCategorySubmit} isLoading={loadingCategory} />
-				</DialogContent>
-			</Dialog>
+	const sidebarItems = [
+		{
+			label: 'Добавить',
+			value: 'create',
+			onClick: () => setActiveSection('create'),
+			active: activeSection === 'create',
+		},
+		{
+			label: 'Заказы',
+			value: 'orders',
+			onClick: () => setActiveSection('orders'),
+			active: activeSection === 'orders',
+		},
+	]
+
+	return (
+		<div className='flex min-h-screen'>
+			<Sidebar items={sidebarItems} />
+
+			<main className='flex-1 p-6'>
+				{activeSection === 'create' && (
+					<CreateTab
+						categories={categories}
+						loadingCategory={loadingCategory}
+						loadingProduct={loadingProduct}
+						onCreateCategory={handleCategorySubmit}
+						onCreateProduct={handleProductSubmit}
+					/>
+				)}
+
+				{activeSection === 'orders' && <OrdersTab orders={orders} onUpdateOrderStatus={handleUpdateOrderStatus} />}
+			</main>
 		</div>
 	)
 }
