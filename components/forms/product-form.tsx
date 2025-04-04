@@ -6,27 +6,36 @@ import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { X } from 'lucide-react'
 import { Form, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import { Category } from '@/types'
-import { ProductFormData, productSchema } from '@/lib/validation/productSchema'
+import { Category, Product } from '@/types'
+import { ProductFormData, createProductSchema, updateProductSchema } from '@/lib/validation/productSchema'
 
 type Props = {
 	categories: Category[]
 	isLoading: boolean
 	onSubmit: (data: ProductFormData) => void
+	initialData?: Product | null
+	onDelete?: () => void
 }
 
-export function ProductForm({ categories, isLoading, onSubmit }: Props) {
+export function ProductForm({ categories, isLoading, onSubmit, initialData, onDelete }: Props) {
 	const form = useForm<ProductFormData>({
-		resolver: zodResolver(productSchema),
+		resolver: zodResolver(initialData ? updateProductSchema : createProductSchema),
 		defaultValues: {
-			name: '',
-			description: '',
-			price: undefined,
-			categoryId: '',
-			options: [''],
+			name: initialData?.name ?? '',
+			description: initialData?.description ?? '',
+			price: initialData?.price ?? undefined,
+			categoryId: initialData?.categoryId._id ?? '',
+			options: initialData?.options ?? [''],
 			image: null,
 		},
 	})
+
+	const {
+		handleSubmit,
+		control,
+		register,
+		formState: { isDirty },
+	} = form
 
 	const { fields, append, remove } = useFieldArray({
 		control: form.control,
@@ -35,10 +44,10 @@ export function ProductForm({ categories, isLoading, onSubmit }: Props) {
 
 	return (
 		<Form {...form}>
-			<form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
+			<form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
 				<FormField
 					name='name'
-					control={form.control}
+					control={control}
 					render={({ field }) => (
 						<FormItem>
 							<FormLabel>Название</FormLabel>
@@ -118,7 +127,7 @@ export function ProductForm({ categories, isLoading, onSubmit }: Props) {
 					<FormLabel>Опции</FormLabel>
 					{fields.map((fieldItem, index) => (
 						<div key={fieldItem.id} className='flex items-center gap-2'>
-							<Input {...form.register(`options.${index}`)} placeholder={`Опция ${index + 1}`} />
+							<Input {...register(`options.${index}`)} placeholder={`Опция ${index + 1}`} />
 							<Button type='button' variant='destructive' size='icon' onClick={() => remove(index)}>
 								<X className='w-4 h-4' />
 							</Button>
@@ -129,9 +138,17 @@ export function ProductForm({ categories, isLoading, onSubmit }: Props) {
 					</Button>
 				</div>
 
-				<Button type='submit' disabled={isLoading}>
-					{isLoading ? 'Загрузка...' : 'Создать'}
-				</Button>
+				<div className='flex items-center gap-4'>
+					{initialData && (
+						<Button type='button' variant='destructive' onClick={onDelete}>
+							Удалить товар
+						</Button>
+					)}
+
+					<Button type='submit' disabled={isLoading || (!!initialData && !isDirty)}>
+						{isLoading ? 'Загрузка...' : initialData ? 'Сохранить' : 'Создать'}
+					</Button>
+				</div>
 			</form>
 		</Form>
 	)

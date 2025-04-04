@@ -12,10 +12,11 @@ interface ProductListProps {
 	loading: boolean
 	onLoadMore?: () => void
 	hasMore: boolean
+	onProductClick?: (product: Product) => void
 	isAdminPanel?: boolean
 }
 
-export const ProductList = ({ products, loading, onLoadMore, hasMore, isAdminPanel }: ProductListProps) => {
+export const ProductList = ({ products, loading, onLoadMore, hasMore, isAdminPanel, onProductClick }: ProductListProps) => {
 	const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
 
 	return (
@@ -26,7 +27,11 @@ export const ProductList = ({ products, loading, onLoadMore, hasMore, isAdminPan
 					<div
 						key={product._id}
 						onClick={() => {
-							if (!isAdminPanel) setSelectedProduct(product)
+							if (isAdminPanel) {
+								onProductClick?.(product)
+							} else {
+								setSelectedProduct(product)
+							}
 						}}
 					>
 						<ProductCard product={product} />

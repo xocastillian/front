@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createCategory, fetchCategories } from '@/lib/api/category'
-import { createProduct, fetchProducts } from '@/lib/api/products'
+import { createProduct, fetchProducts, updateProduct, deleteProduct } from '@/lib/api/products'
 import { fetchOrders, updateOrderStatus } from '@/lib/api/orders'
 import { Category, Order, OrderStatus, Product } from '@/types'
 import { ProductFormData } from '@/lib/validation/productSchema'
@@ -59,6 +59,31 @@ export default function AdminPanelPage() {
 		}
 	}
 
+	const handleUpdateProduct = async (id: string, data: ProductFormData) => {
+		setLoadingProduct(true)
+		try {
+			await updateProduct(id, data)
+			const updated = await fetchProducts(1, 100)
+			setProducts(updated)
+		} catch (err) {
+			console.error('Ошибка при обновлении товара:', err)
+		} finally {
+			setLoadingProduct(false)
+		}
+	}
+
+	const handleDeleteProduct = async (id: string) => {
+		setLoadingProduct(true)
+		try {
+			await deleteProduct(id)
+			setProducts(prev => prev.filter(p => p._id !== id))
+		} catch (err) {
+			console.error('Ошибка при удалении товара:', err)
+		} finally {
+			setLoadingProduct(false)
+		}
+	}
+
 	const handleCategorySubmit = async (data: CategoryFormData) => {
 		setLoadingCategory(true)
 		try {
@@ -108,6 +133,8 @@ export default function AdminPanelPage() {
 						loadingProduct={loadingProduct}
 						onCreateCategory={handleCategorySubmit}
 						onCreateProduct={handleProductSubmit}
+						onUpdateProduct={handleUpdateProduct}
+						onDeleteProduct={handleDeleteProduct}
 						products={products}
 						loadingProducts={loadingProducts}
 						hasMore={false}

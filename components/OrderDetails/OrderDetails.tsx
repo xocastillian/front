@@ -46,9 +46,7 @@ export function OrderDetails({ order, open, onOpenChange, onStatusChange, updati
 						<strong>Состав:</strong>
 						<ul className='list-disc list-inside'>
 							{order.items.map((item, index) => (
-								<li key={index}>
-									{item.productId.name} × {item.quantity}
-								</li>
+								<li key={index}>{item.productId?.name ? `${item.productId.name} × ${item.quantity}` : `Неизвестный товар × ${item.quantity}`}</li>
 							))}
 						</ul>
 					</div>

@@ -5,6 +5,7 @@ export interface Product {
 	price: number
 	imageUrl?: string
 	options?: string[]
+	categoryId: Category
 }
 
 export interface RawCartItem {
