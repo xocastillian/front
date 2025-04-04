@@ -1,3 +1,5 @@
+'use client'
+
 import { useFieldArray, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Input } from '@/components/ui/input'
@@ -8,6 +10,7 @@ import { X } from 'lucide-react'
 import { Form, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Category, Product } from '@/types'
 import { ProductFormData, createProductSchema, updateProductSchema } from '@/lib/validation/productSchema'
+import { ConfirmDialog } from '../ConfirmDialog/ConfirmDialog'
 
 type Props = {
 	categories: Category[]
@@ -59,7 +62,7 @@ export function ProductForm({ categories, isLoading, onSubmit, initialData, onDe
 
 				<FormField
 					name='description'
-					control={form.control}
+					control={control}
 					render={({ field }) => (
 						<FormItem>
 							<FormLabel>Описание</FormLabel>
@@ -71,7 +74,7 @@ export function ProductForm({ categories, isLoading, onSubmit, initialData, onDe
 
 				<FormField
 					name='price'
-					control={form.control}
+					control={control}
 					render={({ field }) => (
 						<FormItem>
 							<FormLabel>Цена</FormLabel>
@@ -90,7 +93,7 @@ export function ProductForm({ categories, isLoading, onSubmit, initialData, onDe
 
 				<FormField
 					name='categoryId'
-					control={form.control}
+					control={control}
 					render={({ field }) => (
 						<FormItem>
 							<FormLabel>Категория</FormLabel>
@@ -113,7 +116,7 @@ export function ProductForm({ categories, isLoading, onSubmit, initialData, onDe
 
 				<FormField
 					name='image'
-					control={form.control}
+					control={control}
 					render={({ field }) => (
 						<FormItem>
 							<FormLabel>Изображение</FormLabel>
@@ -139,10 +142,17 @@ export function ProductForm({ categories, isLoading, onSubmit, initialData, onDe
 				</div>
 
 				<div className='flex items-center gap-4'>
-					{initialData && (
-						<Button type='button' variant='destructive' onClick={onDelete}>
-							Удалить товар
-						</Button>
+					{initialData && onDelete && (
+						<ConfirmDialog
+							trigger={
+								<Button type='button' variant='destructive'>
+									Удалить товар
+								</Button>
+							}
+							title='Удаление товара'
+							description='Вы уверены, что хотите удалить этот товар?'
+							onConfirm={onDelete}
+						/>
 					)}
 
 					<Button type='submit' disabled={isLoading || (!!initialData && !isDirty)}>

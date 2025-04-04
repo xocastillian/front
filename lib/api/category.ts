@@ -13,3 +13,7 @@ export const createCategory = async (data: CategoryFormData): Promise<void> => {
 		slug: data.slug,
 	})
 }
+
+export const deleteCategory = async (id: string): Promise<void> => {
+	await api.delete(`/categories/${id}`)
+}

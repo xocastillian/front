@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { createCategory, fetchCategories } from '@/lib/api/category'
+import { createCategory, deleteCategory, fetchCategories } from '@/lib/api/category'
 import { createProduct, fetchProducts, updateProduct, deleteProduct } from '@/lib/api/products'
 import { fetchOrders, updateOrderStatus } from '@/lib/api/orders'
 import { Category, Order, OrderStatus, Product } from '@/types'
@@ -106,6 +106,19 @@ export default function AdminPanelPage() {
 		}
 	}
 
+	const handleDeleteCategory = async (id: string) => {
+		setLoadingCategory(true)
+		try {
+			await deleteCategory(id)
+			const updated = await fetchCategories()
+			setCategories(updated)
+		} catch (err) {
+			console.error('Ошибка при удалении категории:', err)
+		} finally {
+			setLoadingCategory(false)
+		}
+	}
+
 	const sidebarItems = [
 		{
 			label: 'Добавить',
@@ -138,6 +151,7 @@ export default function AdminPanelPage() {
 						products={products}
 						loadingProducts={loadingProducts}
 						hasMore={false}
+						onDeleteCategory={handleDeleteCategory}
 					/>
 				)}
 

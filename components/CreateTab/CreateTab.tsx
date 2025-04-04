@@ -17,6 +17,7 @@ interface Props {
 	onCreateProduct: (data: ProductFormData) => Promise<void>
 	onUpdateProduct: (id: string, data: ProductFormData) => Promise<void>
 	onDeleteProduct: (id: string) => Promise<void>
+	onDeleteCategory: (id: string) => Promise<void>
 	onCreateCategory: (data: CategoryFormData) => Promise<void>
 	products: Product[]
 	loadingProducts: boolean
@@ -31,6 +32,7 @@ export const CreateTab = ({
 	onUpdateProduct,
 	onDeleteProduct,
 	onCreateCategory,
+	onDeleteCategory,
 	products,
 	loadingProducts,
 	hasMore,
@@ -88,6 +90,7 @@ export const CreateTab = ({
 				onSelect={setSelectedCategory}
 				isAdminPanel
 				onAddCategoryClick={() => setOpenCategory(true)}
+				onDeleteCategory={onDeleteCategory}
 			/>
 
 			<ProductList
