@@ -9,7 +9,7 @@ interface TabsProps<T extends string | number> {
 
 export function Tabs<T extends string | number>({ items, selected, onSelect, allLabel = 'Все' }: TabsProps<T>) {
 	return (
-		<div className='flex gap-2 mb-6 overflow-auto'>
+		<div className='flex gap-2 overflow-auto'>
 			<button className={`px-4 py-2 rounded-full ${selected === null ? 'bg-black text-white' : 'bg-gray-200'}`} onClick={() => onSelect(null)}>
 				{allLabel}
 			</button>

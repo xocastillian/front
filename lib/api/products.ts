@@ -2,9 +2,10 @@ import api from './axios'
 import { Product } from '@/types'
 import { CreateProductFormData } from '@/lib/validation/createProductSchema'
 
-export const fetchProducts = async (page: number, limit: number, categoryId?: string): Promise<Product[]> => {
+export const fetchProducts = async (page: number, limit: number, categoryId?: string, sort?: string): Promise<Product[]> => {
 	const query = new URLSearchParams({ page: String(page), limit: String(limit) })
 	if (categoryId) query.append('categoryId', categoryId)
+	if (sort) query.append('sort', sort)
 
 	const res = await api.get(`/products?${query.toString()}`)
 	return res.data
