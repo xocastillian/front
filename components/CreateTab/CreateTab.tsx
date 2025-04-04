@@ -2,19 +2,19 @@
 
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import { CreateProductForm } from '@/components/forms/create-product-form'
-import { CreateCategoryForm } from '@/components/forms/create-category-form'
+import { ProductForm } from '@/components/forms/product-form'
+import { CreateCategoryForm } from '@/components/forms/category-form'
 import { Category } from '@/types'
 import { useState } from 'react'
-import { CreateProductFormData } from '@/lib/validation/createProductSchema'
-import { CreateCategoryFormData } from '@/lib/validation/createCategorySchema'
+import { ProductFormData } from '@/lib/validation/productSchema'
+import { CategoryFormData } from '@/lib/validation/categorySchema'
 
 interface Props {
 	categories: Category[]
 	loadingProduct: boolean
 	loadingCategory: boolean
-	onCreateProduct: (data: CreateProductFormData) => void
-	onCreateCategory: (data: CreateCategoryFormData) => void
+	onCreateProduct: (data: ProductFormData) => void
+	onCreateCategory: (data: CategoryFormData) => void
 }
 
 export const CreateTab = ({ categories, loadingProduct, loadingCategory, onCreateProduct, onCreateCategory }: Props) => {
@@ -29,7 +29,7 @@ export const CreateTab = ({ categories, loadingProduct, loadingCategory, onCreat
 				</DialogTrigger>
 				<DialogContent>
 					<DialogTitle>Добавить товар</DialogTitle>
-					<CreateProductForm onSubmit={onCreateProduct} isLoading={loadingProduct} categories={categories} />
+					<ProductForm onSubmit={onCreateProduct} isLoading={loadingProduct} categories={categories} />
 				</DialogContent>
 			</Dialog>
 

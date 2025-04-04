@@ -1,6 +1,6 @@
 import * as z from 'zod'
 
-export const createProductSchema = z.object({
+export const productSchema = z.object({
 	name: z.string().min(1, 'Введите название'),
 	description: z.string().min(1, 'Введите описание'),
 	price: z.coerce.number().positive('Цена должна быть больше 0'),
@@ -11,4 +11,4 @@ export const createProductSchema = z.object({
 	}),
 })
 
-export type CreateProductFormData = z.infer<typeof createProductSchema>
+export type ProductFormData = z.infer<typeof productSchema>

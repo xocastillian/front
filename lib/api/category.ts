@@ -1,4 +1,4 @@
-import { CreateCategoryFormData } from '../validation/createCategorySchema'
+import { CreateCategoryFormData } from '../validation/categorySchema'
 import api from './axios'
 import { Category } from '@/types'
 

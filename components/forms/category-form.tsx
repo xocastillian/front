@@ -5,16 +5,16 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Form, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import { CreateCategoryFormData, createCategorySchema } from '@/lib/validation/createCategorySchema'
+import { CategoryFormData, categorySchema } from '@/lib/validation/categorySchema'
 
 type Props = {
-	onSubmit: (data: CreateCategoryFormData) => void
+	onSubmit: (data: CategoryFormData) => void
 	isLoading: boolean
 }
 
 export function CreateCategoryForm({ onSubmit, isLoading }: Props) {
-	const form = useForm<CreateCategoryFormData>({
-		resolver: zodResolver(createCategorySchema),
+	const form = useForm<CategoryFormData>({
+		resolver: zodResolver(categorySchema),
 		defaultValues: {
 			name: '',
 			slug: '',

@@ -7,17 +7,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { X } from 'lucide-react'
 import { Form, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Category } from '@/types'
-import { CreateProductFormData, createProductSchema } from '@/lib/validation/createProductSchema'
+import { ProductFormData, productSchema } from '@/lib/validation/productSchema'
 
 type Props = {
 	categories: Category[]
 	isLoading: boolean
-	onSubmit: (data: CreateProductFormData) => void
+	onSubmit: (data: ProductFormData) => void
 }
 
-export function CreateProductForm({ categories, isLoading, onSubmit }: Props) {
-	const form = useForm<CreateProductFormData>({
-		resolver: zodResolver(createProductSchema),
+export function ProductForm({ categories, isLoading, onSubmit }: Props) {
+	const form = useForm<ProductFormData>({
+		resolver: zodResolver(productSchema),
 		defaultValues: {
 			name: '',
 			description: '',
