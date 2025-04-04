@@ -4,10 +4,11 @@ import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/
 import { Button } from '@/components/ui/button'
 import { ProductForm } from '@/components/forms/product-form'
 import { CreateCategoryForm } from '@/components/forms/category-form'
-import { Category } from '@/types'
+import { Category, Product } from '@/types'
 import { useState } from 'react'
 import { ProductFormData } from '@/lib/validation/productSchema'
 import { CategoryFormData } from '@/lib/validation/categorySchema'
+import { ProductList } from '../ProductList/ProductList'
 
 interface Props {
 	categories: Category[]
@@ -15,14 +16,26 @@ interface Props {
 	loadingCategory: boolean
 	onCreateProduct: (data: ProductFormData) => void
 	onCreateCategory: (data: CategoryFormData) => void
+	products: Product[]
+	loadingProducts: boolean
+	hasMore: boolean
 }
 
-export const CreateTab = ({ categories, loadingProduct, loadingCategory, onCreateProduct, onCreateCategory }: Props) => {
+export const CreateTab = ({
+	categories,
+	loadingProduct,
+	loadingCategory,
+	onCreateProduct,
+	onCreateCategory,
+	products,
+	loadingProducts,
+	hasMore,
+}: Props) => {
 	const [openProduct, setOpenProduct] = useState(false)
 	const [openCategory, setOpenCategory] = useState(false)
 
 	return (
-		<div className='space-y-6 max-w-xl mx-auto'>
+		<div className='space-y-6 mx-auto'>
 			<Dialog open={openProduct} onOpenChange={setOpenProduct}>
 				<DialogTrigger asChild>
 					<Button className='w-full'>Добавить товар</Button>
@@ -44,6 +57,8 @@ export const CreateTab = ({ categories, loadingProduct, loadingCategory, onCreat
 					<CreateCategoryForm onSubmit={onCreateCategory} isLoading={loadingCategory} />
 				</DialogContent>
 			</Dialog>
+
+			<ProductList products={products} loading={loadingProducts} hasMore={hasMore} isAdminPanel />
 		</div>
 	)
 }

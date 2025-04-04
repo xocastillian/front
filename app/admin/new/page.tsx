@@ -3,11 +3,11 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createCategory, fetchCategories } from '@/lib/api/category'
-import { createProduct } from '@/lib/api/products'
+import { createProduct, fetchProducts } from '@/lib/api/products'
 import { fetchOrders, updateOrderStatus } from '@/lib/api/orders'
-import { Category, Order, OrderStatus } from '@/types'
-import { CreateProductFormData } from '@/lib/validation/productSchema'
-import { CreateCategoryFormData } from '@/lib/validation/categorySchema'
+import { Category, Order, OrderStatus, Product } from '@/types'
+import { ProductFormData } from '@/lib/validation/productSchema'
+import { CategoryFormData } from '@/lib/validation/categorySchema'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { getSocket } from '@/lib/api/socket'
 import { CreateTab } from '@/components/CreateTab/CreateTab'
@@ -20,6 +20,15 @@ export default function AdminPanelPage() {
 	const [categories, setCategories] = useState<Category[]>([])
 	const [orders, setOrders] = useState<Order[]>([])
 	const [activeSection, setActiveSection] = useState<'create' | 'orders'>('create')
+	const [products, setProducts] = useState<Product[]>([])
+	const [loadingProducts, setLoadingProducts] = useState(false)
+
+	useEffect(() => {
+		setLoadingProducts(true)
+		fetchProducts(1, 100)
+			.then(setProducts)
+			.finally(() => setLoadingProducts(false))
+	}, [])
 
 	useEffect(() => {
 		fetchCategories().then(setCategories)
@@ -38,7 +47,7 @@ export default function AdminPanelPage() {
 		}
 	}, [])
 
-	const handleProductSubmit = async (data: CreateProductFormData) => {
+	const handleProductSubmit = async (data: ProductFormData) => {
 		setLoadingProduct(true)
 		try {
 			await createProduct(data)
@@ -50,7 +59,7 @@ export default function AdminPanelPage() {
 		}
 	}
 
-	const handleCategorySubmit = async (data: CreateCategoryFormData) => {
+	const handleCategorySubmit = async (data: CategoryFormData) => {
 		setLoadingCategory(true)
 		try {
 			await createCategory(data)
@@ -99,6 +108,9 @@ export default function AdminPanelPage() {
 						loadingProduct={loadingProduct}
 						onCreateCategory={handleCategorySubmit}
 						onCreateProduct={handleProductSubmit}
+						products={products}
+						loadingProducts={loadingProducts}
+						hasMore={false}
 					/>
 				)}
 

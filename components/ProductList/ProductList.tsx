@@ -12,9 +12,10 @@ interface ProductListProps {
 	loading: boolean
 	onLoadMore?: () => void
 	hasMore: boolean
+	isAdminPanel?: boolean
 }
 
-export const ProductList = ({ products, loading, onLoadMore, hasMore }: ProductListProps) => {
+export const ProductList = ({ products, loading, onLoadMore, hasMore, isAdminPanel }: ProductListProps) => {
 	const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
 
 	return (
@@ -22,7 +23,12 @@ export const ProductList = ({ products, loading, onLoadMore, hasMore }: ProductL
 			<h1 className='text-2xl font-bold mb-6'>Список продуктов</h1>
 			<div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6'>
 				{products.map(product => (
-					<div key={product._id} onClick={() => setSelectedProduct(product)}>
+					<div
+						key={product._id}
+						onClick={() => {
+							if (!isAdminPanel) setSelectedProduct(product)
+						}}
+					>
 						<ProductCard product={product} />
 					</div>
 				))}
@@ -38,7 +44,7 @@ export const ProductList = ({ products, loading, onLoadMore, hasMore }: ProductL
 				</div>
 			)}
 
-			{selectedProduct && <ProductModal product={selectedProduct} onClose={() => setSelectedProduct(null)} />}
+			{selectedProduct && !isAdminPanel && <ProductModal product={selectedProduct} onClose={() => setSelectedProduct(null)} />}
 		</div>
 	)
 }
