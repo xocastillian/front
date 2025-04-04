@@ -5,9 +5,11 @@ interface TabsProps<T extends string | number> {
 	selected: T | null
 	onSelect: (id: T | null) => void
 	allLabel?: string
+	isAdminPanel?: boolean
+	onAddCategoryClick?: () => void
 }
 
-export function Tabs<T extends string | number>({ items, selected, onSelect, allLabel = 'Все' }: TabsProps<T>) {
+export function Tabs<T extends string | number>({ items, selected, onSelect, allLabel = 'Все', isAdminPanel, onAddCategoryClick }: TabsProps<T>) {
 	return (
 		<div className='flex gap-2 overflow-auto'>
 			<button className={`px-4 py-2 rounded-full ${selected === null ? 'bg-black text-white' : 'bg-gray-200'}`} onClick={() => onSelect(null)}>
@@ -22,6 +24,11 @@ export function Tabs<T extends string | number>({ items, selected, onSelect, all
 					{item.name}
 				</button>
 			))}
+			{isAdminPanel && onAddCategoryClick && (
+				<button className='px-4 py-2 rounded-full bg-blue-500 text-white' onClick={onAddCategoryClick}>
+					Добавить категорию
+				</button>
+			)}
 		</div>
 	)
 }

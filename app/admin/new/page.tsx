@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 import { createCategory, fetchCategories } from '@/lib/api/category'
 import { createProduct, fetchProducts, updateProduct, deleteProduct } from '@/lib/api/products'
 import { fetchOrders, updateOrderStatus } from '@/lib/api/orders'
@@ -14,7 +13,6 @@ import { CreateTab } from '@/components/CreateTab/CreateTab'
 import { OrdersTab } from '@/components/OrdersTab/OrdersTab'
 
 export default function AdminPanelPage() {
-	const router = useRouter()
 	const [loadingProduct, setLoadingProduct] = useState(false)
 	const [loadingCategory, setLoadingCategory] = useState(false)
 	const [categories, setCategories] = useState<Category[]>([])
@@ -51,7 +49,8 @@ export default function AdminPanelPage() {
 		setLoadingProduct(true)
 		try {
 			await createProduct(data)
-			router.push('/')
+			const updated = await fetchProducts(1, 100)
+			setProducts(updated)
 		} catch (err) {
 			console.error('Ошибка при создании товара:', err)
 		} finally {
@@ -76,7 +75,8 @@ export default function AdminPanelPage() {
 		setLoadingProduct(true)
 		try {
 			await deleteProduct(id)
-			setProducts(prev => prev.filter(p => p._id !== id))
+			const updated = await fetchProducts(1, 100)
+			setProducts(updated)
 		} catch (err) {
 			console.error('Ошибка при удалении товара:', err)
 		} finally {

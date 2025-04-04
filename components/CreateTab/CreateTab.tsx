@@ -1,7 +1,6 @@
 'use client'
 
-import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import { ProductForm } from '@/components/forms/product-form'
 import { CreateCategoryForm } from '@/components/forms/category-form'
 import { Category, Product } from '@/types'
@@ -9,15 +8,16 @@ import { useState } from 'react'
 import { ProductFormData } from '@/lib/validation/productSchema'
 import { CategoryFormData } from '@/lib/validation/categorySchema'
 import { ProductList } from '../ProductList/ProductList'
+import { Tabs } from '@/components/Tabs/Tabs'
 
 interface Props {
 	categories: Category[]
 	loadingProduct: boolean
 	loadingCategory: boolean
-	onCreateProduct: (data: ProductFormData) => void
-	onUpdateProduct: (id: string, data: ProductFormData) => void
-	onDeleteProduct: (id: string) => void
-	onCreateCategory: (data: CategoryFormData) => void
+	onCreateProduct: (data: ProductFormData) => Promise<void>
+	onUpdateProduct: (id: string, data: ProductFormData) => Promise<void>
+	onDeleteProduct: (id: string) => Promise<void>
+	onCreateCategory: (data: CategoryFormData) => Promise<void>
 	products: Product[]
 	loadingProducts: boolean
 	hasMore: boolean
@@ -38,17 +38,30 @@ export const CreateTab = ({
 	const [openProduct, setOpenProduct] = useState(false)
 	const [openCategory, setOpenCategory] = useState(false)
 	const [editingProduct, setEditingProduct] = useState<Product | null>(null)
+	const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
 
-	const handleEditSubmit = (data: ProductFormData) => {
+	const filteredProducts = selectedCategory ? products.filter(p => p.categoryId._id === selectedCategory) : products
+
+	const handleCreateProduct = async (data: ProductFormData) => {
+		await onCreateProduct(data)
+		setOpenProduct(false)
+	}
+
+	const handleCreateCategory = async (data: CategoryFormData) => {
+		await onCreateCategory(data)
+		setOpenCategory(false)
+	}
+
+	const handleEditSubmit = async (data: ProductFormData) => {
 		if (editingProduct) {
-			onUpdateProduct(editingProduct._id, data)
+			await onUpdateProduct(editingProduct._id, data)
 			setEditingProduct(null)
 		}
 	}
 
-	const handleDelete = () => {
+	const handleDelete = async () => {
 		if (editingProduct) {
-			onDeleteProduct(editingProduct._id)
+			await onDeleteProduct(editingProduct._id)
 			setEditingProduct(null)
 		}
 	}
@@ -56,32 +69,33 @@ export const CreateTab = ({
 	return (
 		<div className='space-y-6 mx-auto'>
 			<Dialog open={openProduct} onOpenChange={setOpenProduct}>
-				<DialogTrigger asChild>
-					<Button className='w-full'>Добавить товар</Button>
-				</DialogTrigger>
 				<DialogContent>
 					<DialogTitle>Добавить товар</DialogTitle>
-					<ProductForm onSubmit={onCreateProduct} isLoading={loadingProduct} categories={categories} />
+					<ProductForm onSubmit={handleCreateProduct} isLoading={loadingProduct} categories={categories} />
 				</DialogContent>
 			</Dialog>
 
 			<Dialog open={openCategory} onOpenChange={setOpenCategory}>
-				<DialogTrigger asChild>
-					<Button variant='outline' className='w-full'>
-						Добавить категорию
-					</Button>
-				</DialogTrigger>
 				<DialogContent>
 					<DialogTitle>Добавить категорию</DialogTitle>
-					<CreateCategoryForm onSubmit={onCreateCategory} isLoading={loadingCategory} />
+					<CreateCategoryForm onSubmit={handleCreateCategory} isLoading={loadingCategory} />
 				</DialogContent>
 			</Dialog>
 
+			<Tabs
+				items={categories.map(c => ({ id: c._id, name: c.name }))}
+				selected={selectedCategory}
+				onSelect={setSelectedCategory}
+				isAdminPanel
+				onAddCategoryClick={() => setOpenCategory(true)}
+			/>
+
 			<ProductList
-				products={products}
+				products={filteredProducts}
 				loading={loadingProducts}
 				hasMore={hasMore}
 				isAdminPanel
+				onAddProductClick={() => setOpenProduct(true)}
 				onProductClick={product => setEditingProduct(product)}
 			/>
 
