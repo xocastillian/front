@@ -42,7 +42,7 @@ export const CreateTab = ({
 	const [editingProduct, setEditingProduct] = useState<Product | null>(null)
 	const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
 
-	const filteredProducts = selectedCategory ? products.filter(p => p.categoryId._id === selectedCategory) : products
+	const filteredProducts = selectedCategory ? products.filter(p => p.categoryId?._id === selectedCategory) : products
 
 	const handleCreateProduct = async (data: ProductFormData) => {
 		await onCreateProduct(data)
