@@ -27,7 +27,7 @@ export function ProductForm({ categories, isLoading, onSubmit, initialData, onDe
 			name: initialData?.name ?? '',
 			description: initialData?.description ?? '',
 			price: initialData?.price ?? undefined,
-			categoryId: initialData?.categoryId._id ?? '',
+			categoryId: initialData?.categoryId ? initialData.categoryId._id : '',
 			options: initialData?.options ?? [''],
 			image: null,
 		},

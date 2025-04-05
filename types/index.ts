@@ -6,6 +6,7 @@ export interface Product {
 	imageUrl?: string
 	options?: string[]
 	categoryId: Category
+	createdAt: Date
 }
 
 export interface RawCartItem {

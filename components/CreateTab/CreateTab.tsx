@@ -1,14 +1,17 @@
 'use client'
 
+import { useState } from 'react'
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { SortBox } from '@/components/SortBox/SortBox'
 import { ProductForm } from '@/components/forms/product-form'
 import { CreateCategoryForm } from '@/components/forms/category-form'
-import { Category, Product } from '@/types'
-import { useState } from 'react'
-import { ProductFormData } from '@/lib/validation/productSchema'
-import { CategoryFormData } from '@/lib/validation/categorySchema'
 import { ProductList } from '../ProductList/ProductList'
 import { Tabs } from '@/components/Tabs/Tabs'
+import { useDebounce } from '@/hooks/useDebounce'
+import { Category, Product } from '@/types'
+import { ProductFormData } from '@/lib/validation/productSchema'
+import { CategoryFormData } from '@/lib/validation/categorySchema'
 
 interface Props {
 	categories: Category[]
@@ -23,6 +26,13 @@ interface Props {
 	loadingProducts: boolean
 	hasMore: boolean
 }
+
+const sortOptions = [
+	{ label: 'Без сортировки', value: '' },
+	{ label: 'Цена ↑', value: 'priceAsc' },
+	{ label: 'Цена ↓', value: 'priceDesc' },
+	{ label: 'По новизне', value: 'new' },
+]
 
 export const CreateTab = ({
 	categories,
@@ -41,8 +51,9 @@ export const CreateTab = ({
 	const [openCategory, setOpenCategory] = useState(false)
 	const [editingProduct, setEditingProduct] = useState<Product | null>(null)
 	const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
-
-	const filteredProducts = selectedCategory ? products.filter(p => p.categoryId?._id === selectedCategory) : products
+	const [search, setSearch] = useState('')
+	const [sort, setSort] = useState('')
+	const debouncedSearch = useDebounce(search, 500)
 
 	const handleCreateProduct = async (data: ProductFormData) => {
 		await onCreateProduct(data)
@@ -68,6 +79,17 @@ export const CreateTab = ({
 		}
 	}
 
+	const filteredByCategory = selectedCategory ? products.filter(p => p.categoryId?._id === selectedCategory) : products
+
+	const searchedProducts = filteredByCategory.filter(p => p.name.toLowerCase().includes(debouncedSearch.toLowerCase()))
+
+	const sortedProducts = [...searchedProducts].sort((a, b) => {
+		if (sort === 'priceAsc') return a.price - b.price
+		if (sort === 'priceDesc') return b.price - a.price
+		if (sort === 'new') return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+		return 0
+	})
+
 	return (
 		<div className='space-y-6 mx-auto'>
 			<Dialog open={openProduct} onOpenChange={setOpenProduct}>
@@ -84,17 +106,24 @@ export const CreateTab = ({
 				</DialogContent>
 			</Dialog>
 
-			<Tabs
-				items={categories.map(c => ({ id: c._id, name: c.name }))}
-				selected={selectedCategory}
-				onSelect={setSelectedCategory}
-				isAdminPanel
-				onAddCategoryClick={() => setOpenCategory(true)}
-				onDeleteCategory={onDeleteCategory}
-			/>
+			<div className='flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6'>
+				<Tabs
+					items={categories.map(c => ({ id: c._id, name: c.name }))}
+					selected={selectedCategory}
+					onSelect={setSelectedCategory}
+					isAdminPanel
+					onAddCategoryClick={() => setOpenCategory(true)}
+					onDeleteCategory={onDeleteCategory}
+				/>
+
+				<div className='flex gap-4'>
+					<Input type='text' placeholder='Поиск по имени...' value={search} onChange={e => setSearch(e.target.value)} className='w-full max-w-md' />
+					<SortBox value={sort} onChange={setSort} options={sortOptions} placeholder='Сортировка...' widthClass='w-[220px]' />
+				</div>
+			</div>
 
 			<ProductList
-				products={filteredProducts}
+				products={sortedProducts}
 				loading={loadingProducts}
 				hasMore={hasMore}
 				isAdminPanel
