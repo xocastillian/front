@@ -1,3 +1,4 @@
+import { UserRole } from '@/types'
 import { z } from 'zod'
 
 export const LoginResponseSchema = z.object({
@@ -8,6 +9,7 @@ export const LoginResponseSchema = z.object({
 		name: z.string(),
 		email: z.string(),
 		phone: z.string(),
+		role: z.nativeEnum(UserRole),
 	}),
 })
 

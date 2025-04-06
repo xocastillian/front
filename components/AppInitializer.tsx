@@ -14,14 +14,14 @@ export function AppInitializer() {
 	useEffect(() => {
 		initialize()
 		useCartStore.getState().loadFromStorage()
-	}, [])
+	}, [initialize])
 
 	useEffect(() => {
 		if (isAuthenticated) {
 			fetchCart()
 			initializeProfile()
 		}
-	}, [isAuthenticated])
+	}, [isAuthenticated, fetchCart, initializeProfile])
 
 	return null
 }

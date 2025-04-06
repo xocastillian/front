@@ -58,3 +58,36 @@ export interface Order {
 	updatedAt: string
 	__v: number
 }
+
+export enum UserRole {
+	Admin = 'admin',
+	User = 'user',
+}
+
+export interface User {
+	name: string
+	email: string
+	phone: string
+	_id?: string
+	role?: UserRole
+}
+
+export interface SupportSession {
+	_id: string
+	guestId?: string
+	userId?: User
+	adminId: string
+	isActive: boolean
+	createdAt: string
+	updatedAt: string
+}
+
+export interface SessionMessage {
+	_id: string
+	text: string
+	senderId: string
+	senderType: 'user' | 'guest' | 'admin'
+	sessionId: string
+	createdAt: string
+	updatedAt: string
+}

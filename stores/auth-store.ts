@@ -1,12 +1,6 @@
 import { create } from 'zustand'
 import { refreshClient } from '@/lib/api/axios'
-
-interface User {
-	name: string
-	email: string
-	phone: string
-	_id?: string
-}
+import { User } from '@/types'
 
 interface AuthState {
 	isAuthenticated: boolean
@@ -29,6 +23,7 @@ export const useAuthStore = create<AuthState>(set => ({
 		localStorage.setItem('token', accessToken)
 		localStorage.setItem('refreshToken', refreshToken)
 		localStorage.setItem('user', JSON.stringify(user))
+		localStorage.removeItem('guestId')
 		set({ isAuthenticated: true, user, accessToken, refreshToken })
 	},
 

@@ -8,9 +8,9 @@ import { Category, Order, OrderStatus, Product } from '@/types'
 import { ProductFormData } from '@/lib/validation/productSchema'
 import { CategoryFormData } from '@/lib/validation/categorySchema'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
-import { getSocket } from '@/lib/api/socket'
 import { CreateTab } from '@/components/CreateTab/CreateTab'
 import { OrdersTab } from '@/components/OrdersTab/OrdersTab'
+import { getSocket } from '@/lib/api/ordersSocket'
 
 export default function AdminPanelPage() {
 	const [loadingProduct, setLoadingProduct] = useState(false)
