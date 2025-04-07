@@ -10,6 +10,7 @@ import { fetchProducts } from '@/lib/api/products'
 import { SortBox } from '@/components/SortBox/SortBox'
 import { Input } from '@/components/ui/input'
 import { useDebounce } from '@/hooks/useDebounce'
+import { Loader } from '@/components/Loader/Loader'
 
 const sortOptions = [
 	{ label: 'Без сортировки', value: '' },
@@ -76,7 +77,7 @@ export default function Home() {
 	}, [page, selectedCategory, sort, debouncedSearch])
 
 	return (
-		<main className='px-6 py-14'>
+		<main className='px-6 py-6'>
 			<div className='flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6'>
 				<Tabs items={categories.map(c => ({ id: c._id, name: c.name }))} selected={selectedCategory} onSelect={handleTabClick} />
 
@@ -86,7 +87,7 @@ export default function Home() {
 				</div>
 			</div>
 
-			<ProductList products={products} loading={loading} onLoadMore={handleLoadMore} hasMore={hasMore} />
+			{loading ? <Loader /> : <ProductList products={products} loading={loading} onLoadMore={handleLoadMore} hasMore={hasMore} />}
 		</main>
 	)
 }

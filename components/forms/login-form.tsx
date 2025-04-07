@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import { Loader } from '../Loader/Loader'
 
 type Props = {
 	onSubmit: (data: LoginFormData) => void
@@ -23,7 +24,9 @@ export function LoginForm({ onSubmit, isLoading }: Props) {
 		},
 	})
 
-	return (
+	return isLoading ? (
+		<Loader />
+	) : (
 		<Card className='w-[400px]'>
 			<CardHeader>
 				<CardTitle>Вход</CardTitle>

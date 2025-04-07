@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import { Loader } from '../Loader/Loader'
 
 interface RegisterFormProps {
 	onSubmit: (data: RegisterFormData) => void
@@ -25,7 +26,9 @@ export const RegisterForm = ({ onSubmit, isLoading }: RegisterFormProps) => {
 		},
 	})
 
-	return (
+	return isLoading ? (
+		<Loader />
+	) : (
 		<Card className='w-[400px]'>
 			<CardHeader>
 				<CardTitle>Регистрация</CardTitle>
