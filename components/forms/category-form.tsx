@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Form, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { CategoryFormData, categorySchema } from '@/lib/validation/categorySchema'
+import { Loader2 } from 'lucide-react'
 
 type Props = {
 	onSubmit: (data: CategoryFormData) => void
@@ -47,7 +48,7 @@ export function CreateCategoryForm({ onSubmit, isLoading }: Props) {
 					)}
 				/>
 				<Button type='submit' disabled={isLoading}>
-					{isLoading ? 'Загрузка...' : 'Создать категорию'}
+					{isLoading ? <Loader2 className='w-4 h-4 mr-2 animate-spin' /> : 'Создать категорию'}
 				</Button>
 			</form>
 		</Form>

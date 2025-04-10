@@ -11,6 +11,8 @@ import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { CreateTab } from '@/components/CreateTab/CreateTab'
 import { OrdersTab } from '@/components/OrdersTab/OrdersTab'
 import { getSocket } from '@/lib/api/ordersSocket'
+import { toast } from 'sonner'
+import { Loader } from '@/components/Loader/Loader'
 
 export default function AdminPanelPage() {
 	const [loadingProduct, setLoadingProduct] = useState(false)
@@ -23,7 +25,7 @@ export default function AdminPanelPage() {
 
 	useEffect(() => {
 		setLoadingProducts(true)
-		fetchProducts(1, 100)
+		fetchProducts(1, 1000)
 			.then(setProducts)
 			.finally(() => setLoadingProducts(false))
 	}, [])
@@ -51,8 +53,10 @@ export default function AdminPanelPage() {
 			await createProduct(data)
 			const updated = await fetchProducts(1, 100)
 			setProducts(updated)
+			toast.success('Товар создан')
 		} catch (err) {
 			console.error('Ошибка при создании товара:', err)
+			toast.error('Не удалось создать товар')
 		} finally {
 			setLoadingProduct(false)
 		}
@@ -64,8 +68,10 @@ export default function AdminPanelPage() {
 			await updateProduct(id, data)
 			const updated = await fetchProducts(1, 100)
 			setProducts(updated)
+			toast.success('Товар обновлён')
 		} catch (err) {
 			console.error('Ошибка при обновлении товара:', err)
+			toast.error('Не удалось обновить товар')
 		} finally {
 			setLoadingProduct(false)
 		}
@@ -77,8 +83,10 @@ export default function AdminPanelPage() {
 			await deleteProduct(id)
 			const updated = await fetchProducts(1, 100)
 			setProducts(updated)
+			toast.success('Товар удалён')
 		} catch (err) {
 			console.error('Ошибка при удалении товара:', err)
+			toast.error('Не удалось удалить товар')
 		} finally {
 			setLoadingProduct(false)
 		}
@@ -90,19 +98,12 @@ export default function AdminPanelPage() {
 			await createCategory(data)
 			const updated = await fetchCategories()
 			setCategories(updated)
+			toast.success('Категория создана')
 		} catch (err) {
 			console.error('Ошибка при создании категории:', err)
+			toast.error('Не удалось создать категорию')
 		} finally {
 			setLoadingCategory(false)
-		}
-	}
-
-	const handleUpdateOrderStatus = async (orderId: string, status: OrderStatus) => {
-		try {
-			const updated = await updateOrderStatus(orderId, status)
-			setOrders(prev => prev.map(o => (o._id === updated._id ? { ...o, status: updated.status } : o)))
-		} catch (err) {
-			console.error('Ошибка при обновлении статуса заказа:', err)
 		}
 	}
 
@@ -112,10 +113,23 @@ export default function AdminPanelPage() {
 			await deleteCategory(id)
 			const updated = await fetchCategories()
 			setCategories(updated)
+			toast.success('Категория удалена')
 		} catch (err) {
 			console.error('Ошибка при удалении категории:', err)
+			toast.error('Не удалось удалить категорию')
 		} finally {
 			setLoadingCategory(false)
+		}
+	}
+
+	const handleUpdateOrderStatus = async (orderId: string, status: OrderStatus) => {
+		try {
+			const updated = await updateOrderStatus(orderId, status)
+			setOrders(prev => prev.map(o => (o._id === updated._id ? { ...o, status: updated.status } : o)))
+			toast.success('Статус заказа обновлён')
+		} catch (err) {
+			console.error('Ошибка при обновлении статуса заказа:', err)
+			toast.error('Не удалось обновить статус')
 		}
 	}
 
@@ -135,7 +149,9 @@ export default function AdminPanelPage() {
 	]
 
 	return (
-		<div className='flex min-h-screen'>
+		<div className='flex min-h-screen relative'>
+			{(loadingProducts || loadingProduct || loadingCategory) && <Loader />}
+
 			<Sidebar items={sidebarItems} />
 
 			<main className='flex-1 p-6'>

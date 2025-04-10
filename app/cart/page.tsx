@@ -5,12 +5,26 @@ import { Button } from '@/components/ui/button'
 import { CartItemCard } from '@/components/CartItemCard/CartItemCard'
 import { ConfirmDialog } from '@/components/ConfirmDialog/ConfirmDialog'
 import { OrderForm } from '@/components/forms/order-form'
+import { toast } from 'sonner'
+import { useState } from 'react'
+import { Loader } from '@/components/Loader/Loader'
 
 export default function CartPage() {
 	const { items, totalPrice, clearCart } = useCartStore()
+	const [clearing, setClearing] = useState(false)
+
+	const handleClear = async () => {
+		setClearing(true)
+		setTimeout(() => {
+			clearCart()
+			toast.success('Корзина очищена')
+			setClearing(false)
+		}, 600)
+	}
 
 	return (
-		<div className='px-6 py-14 max-w-3xl mx-auto'>
+		<div className='relative px-6 py-14 max-w-3xl mx-auto'>
+			{clearing && <Loader />}
 			<h1 className='text-2xl font-bold mb-6'>Корзина</h1>
 
 			{items.length === 0 ? (
@@ -22,7 +36,7 @@ export default function CartPage() {
 							trigger={<Button variant='destructive'>Очистить корзину</Button>}
 							title='Очистить корзину?'
 							description='Вы уверены, что хотите удалить все товары из корзины?'
-							onConfirm={clearCart}
+							onConfirm={handleClear}
 						/>
 						<p className='text-lg font-bold'>Всего: {totalPrice()} ₸</p>
 					</div>
@@ -31,7 +45,7 @@ export default function CartPage() {
 						<CartItemCard key={item._id} item={item} />
 					))}
 
-					{items.length > 0 && <OrderForm />}
+					<OrderForm />
 				</div>
 			)}
 		</div>
