@@ -64,7 +64,7 @@ export function ProductForm({ categories, isLoading, onSubmit, initialData, onDe
 
 	return (
 		<Form {...form}>
-			<form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
+			<form onSubmit={handleSubmit(onSubmit)} className='space-y-4 max-h-[calc(100vh-100px)] overflow-y-auto pr-2'>
 				<fieldset disabled={isLoading} className='space-y-4'>
 					<FormField
 						name='name'
