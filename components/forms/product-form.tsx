@@ -84,7 +84,7 @@ export function ProductForm({ categories, isLoading, onSubmit, initialData, onDe
 						render={({ field }) => (
 							<FormItem>
 								<FormLabel>Описание</FormLabel>
-								<Textarea {...field} className='resize-none' />
+								<Textarea {...field} className='resize-none' maxLength={120} />
 								<FormMessage />
 							</FormItem>
 						)}

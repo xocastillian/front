@@ -43,37 +43,50 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
 
 	return (
 		<Dialog open onOpenChange={onClose}>
-			<DialogContent>
-				{product.imageUrl && (
-					<div className='relative w-full h-48 mb-4 rounded-md overflow-hidden'>
-						<Image src={product.imageUrl} alt={product.name} fill className='object-cover' sizes='(max-width: 768px) 100vw, 33vw' priority={false} />
-					</div>
-				)}
+			<DialogContent className='w-fit max-w-[95vw] min-w-[800px] h-[400px] p-0 overflow-hidden border-0 ring-0 outline-none shadow-none'>
+				<div className='flex flex-col md:flex-row items-stretch h-full'>
+					{product.imageUrl && (
+						<div className='relative w-[400px] h-[400px] flex-shrink-0'>
+							<Image src={product.imageUrl} alt={product.name} fill className='object-cover' sizes='(max-width: 768px) 100vw, 300px' />
+						</div>
+					)}
 
-				<DialogHeader>
-					<DialogTitle>{product.name}</DialogTitle>
-				</DialogHeader>
+					<div className='p-6 flex flex-col justify-between w-full min-w-[300px] h-full'>
+						<div className='flex flex-col'>
+							<DialogHeader>
+								<DialogTitle>{product.name}</DialogTitle>
+							</DialogHeader>
 
-				<p className='text-sm text-muted-foreground mb-4'>{product.description}</p>
+							<div className='flex flex-col items-start gap-2 mt-4'>
+								<p className='text-sm text-muted-foreground'>{product.description}</p>
 
-				<div className='flex items-center gap-4 mb-4'>
-					<span>Количество:</span>
-					<div className='flex items-center border rounded-md'>
-						<Button type='button' size='sm' variant='default' onClick={decrement} className='rounded-l-md'>
-							−
-						</Button>
-						<div className='w-10 text-center select-none'>{quantity}</div>
-						<Button type='button' size='sm' variant='default' onClick={increment} className='rounded-r-md'>
-							+
+								{product.options && product.options.length > 0 && (
+									<ul className='list-disc list-inside text-sm text-muted-foreground'>
+										{product.options.map((option, index) => (
+											<li key={index}>{option}</li>
+										))}
+									</ul>
+								)}
+
+								<div className='flex items-center gap-4 mt-4'>
+									<div className='flex items-center border rounded-md'>
+										<Button type='button' size='sm' variant='default' onClick={decrement} className='rounded-l-md'>
+											−
+										</Button>
+										<div className='w-10 text-center select-none'>{quantity}</div>
+										<Button type='button' size='sm' variant='default' onClick={increment} className='rounded-r-md'>
+											+
+										</Button>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<Button className='w-full mt-6' onClick={handleAddToCart} disabled={loading}>
+							{loading ? <Loader2 className='h-4 w-4 animate-spin' /> : `В корзину за ${(product.price * quantity).toFixed(2)} ₸`}
 						</Button>
 					</div>
 				</div>
-
-				<p className='font-semibold mb-4'>Итог: {(product.price * quantity).toFixed(2)} ₸</p>
-
-				<Button className='w-full' onClick={handleAddToCart} disabled={loading}>
-					{loading ? <Loader2 className='h-4 w-4 animate-spin' /> : 'В корзину'}
-				</Button>
 			</DialogContent>
 		</Dialog>
 	)

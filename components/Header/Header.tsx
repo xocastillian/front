@@ -18,7 +18,7 @@ export default function Header() {
 	const { cartItemCount } = useCartStore()
 
 	return (
-		<header className='sticky top-0 left-0 right-0 z-50 bg-white border-b shadow-sm px-6 py-4 flex items-center justify-between'>
+		<header className='sticky top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur border-b shadow-sm px-6 py-4 flex items-center justify-between'>
 			{/* Логотип */}
 			<Link href='/' className='text-xl font-bold'>
 				FOOD UPНИСЬ!
