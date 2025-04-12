@@ -22,6 +22,7 @@ export default function AdminPanelPage() {
 	const [activeSection, setActiveSection] = useState<'create' | 'orders'>('create')
 	const [products, setProducts] = useState<Product[]>([])
 	const [loadingProducts, setLoadingProducts] = useState(false)
+	const [hasNewOrder, setHasNewOrder] = useState(false)
 
 	useEffect(() => {
 		setLoadingProducts(true)
@@ -40,12 +41,21 @@ export default function AdminPanelPage() {
 		const socket = getSocket()
 		socket.on('order:new', (order: Order) => {
 			setOrders(prev => [order, ...prev])
+			if (activeSection !== 'orders') {
+				setHasNewOrder(true)
+			}
 		})
 
 		return () => {
 			socket.off('order:new')
 		}
-	}, [])
+	}, [activeSection])
+
+	useEffect(() => {
+		if (activeSection === 'orders') {
+			setHasNewOrder(false)
+		}
+	}, [activeSection])
 
 	const handleProductSubmit = async (data: ProductFormData) => {
 		setLoadingProduct(true)
@@ -145,6 +155,7 @@ export default function AdminPanelPage() {
 			value: 'orders',
 			onClick: () => setActiveSection('orders'),
 			active: activeSection === 'orders',
+			hasNotification: hasNewOrder,
 		},
 	]
 

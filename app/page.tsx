@@ -10,7 +10,6 @@ import { fetchProducts } from '@/lib/api/products'
 import { SortBox } from '@/components/SortBox/SortBox'
 import { Input } from '@/components/ui/input'
 import { useDebounce } from '@/hooks/useDebounce'
-import { Loader } from '@/components/Loader/Loader'
 
 const sortOptions = [
 	{ label: 'Без сортировки', value: '' },
@@ -87,7 +86,7 @@ export default function Home() {
 				</div>
 			</div>
 
-			{loading ? <Loader /> : <ProductList products={products} loading={loading} onLoadMore={handleLoadMore} hasMore={hasMore} />}
+			<ProductList products={products} loading={loading} onLoadMore={handleLoadMore} hasMore={hasMore} />
 		</main>
 	)
 }
