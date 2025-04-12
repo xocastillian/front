@@ -76,7 +76,7 @@ export const OrdersTab = ({ orders, onUpdateOrderStatus }: OrdersTabProps) => {
 								trigger={
 									<Card className={`${getCardColor(order.status)} cursor-pointer hover:shadow-md transition`}>
 										<CardHeader>
-											<CardTitle className='text-base'>Заказ № {order._id}</CardTitle>
+											<CardTitle className='text-base'>Заказ № {order.orderNumber}</CardTitle>
 										</CardHeader>
 										<CardContent className='text-sm text-muted-foreground space-y-1'>
 											<div>Сумма: {order.totalPrice} ₸</div>

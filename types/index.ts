@@ -47,6 +47,7 @@ export enum OrderStatus {
 
 export interface Order {
 	_id: string
+	orderNumber: string
 	userId?: string
 	items: OrderItem[]
 	totalPrice: number
