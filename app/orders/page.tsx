@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import api from '@/lib/api/axios'
 import { OrderItem } from '@/types'
 import { OrderCard } from '@/components/OrderCard/OrderCard'
+import { useAuthGuard } from '@/hooks/useAuthGuard'
 
 type Order = {
 	_id: string
@@ -14,6 +15,7 @@ type Order = {
 }
 
 export default function OrdersPage() {
+	useAuthGuard()
 	const [orders, setOrders] = useState<Order[]>([])
 	const [loading, setLoading] = useState(true)
 

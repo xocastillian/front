@@ -1,12 +1,14 @@
 'use client'
 
 import Header from '@/components/Header/Header'
+import { Footer } from './Footer/Footer'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
 	return (
-		<>
+		<div className='flex flex-col flex-1'>
 			<Header />
-			<main>{children}</main>
-		</>
+			<main className='flex-1'>{children}</main>
+			<Footer />
+		</div>
 	)
 }

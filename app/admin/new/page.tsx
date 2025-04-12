@@ -13,8 +13,11 @@ import { OrdersTab } from '@/components/OrdersTab/OrdersTab'
 import { getSocket } from '@/lib/api/ordersSocket'
 import { toast } from 'sonner'
 import { Loader } from '@/components/Loader/Loader'
+import { useAuthGuard } from '@/hooks/useAuthGuard'
 
 export default function AdminPanelPage() {
+	useAuthGuard('admin')
+
 	const [loadingProduct, setLoadingProduct] = useState(false)
 	const [loadingCategory, setLoadingCategory] = useState(false)
 	const [categories, setCategories] = useState<Category[]>([])
