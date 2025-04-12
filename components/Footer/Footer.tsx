@@ -1,9 +1,16 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 
 export const Footer = () => {
+	const [year, setYear] = useState<number | null>(null)
+
+	useEffect(() => {
+		setYear(new Date().getFullYear())
+	}, [])
+
 	return (
 		<footer className='w-full bg-black text-white border-t border-neutral-800 py-8'>
 			<div className='container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-6 text-sm'>
@@ -54,7 +61,7 @@ export const Footer = () => {
 				</div>
 			</div>
 
-			<div className='mt-8 text-center text-xs'>&copy; {new Date().getFullYear()} FOOD UPНИСЬ! Дипломная работа.</div>
+			<div className='mt-8 text-center text-xs'>&copy; {year !== null ? year : ''} FOOD UPНИСЬ! Дипломная работа.</div>
 
 			<div className='mt-6 flex justify-center'>
 				<Image src='/LOGO_NEW_ru.png' alt='Логотип университета' width={200} height={200} />

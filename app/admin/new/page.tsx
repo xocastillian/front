@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { createCategory, deleteCategory, fetchCategories } from '@/lib/api/category'
 import { createProduct, fetchProducts, updateProduct, deleteProduct } from '@/lib/api/products'
-import { fetchOrders, updateOrderStatus } from '@/lib/api/orders'
+import { updateOrderStatus, fetchAllOrdersForAdmin } from '@/lib/api/orders'
 import { Category, Order, OrderStatus, Product } from '@/types'
 import { ProductFormData } from '@/lib/validation/productSchema'
 import { CategoryFormData } from '@/lib/validation/categorySchema'
@@ -39,7 +39,12 @@ export default function AdminPanelPage() {
 	}, [])
 
 	useEffect(() => {
-		fetchOrders().then(setOrders)
+		fetchAllOrdersForAdmin()
+			.then(setOrders)
+			.catch(err => {
+				console.error('Ошибка при получении заказов администратора:', err)
+				toast.error('Не удалось загрузить заказы')
+			})
 
 		const socket = getSocket()
 		socket.on('order:new', (order: Order) => {
