@@ -61,7 +61,7 @@ export const Footer = () => {
 				</div>
 			</div>
 
-			<div className='mt-8 text-center text-xs'>&copy; {year !== null ? year : ''} FOOD UPНИСЬ! Дипломная работа.</div>
+			{year !== null && <div className='mt-8 text-center text-xs'>&copy; {year} FOOD UPНИСЬ! Дипломная работа.</div>}
 
 			<div className='mt-6 flex justify-center'>
 				<Image src='/LOGO_NEW_ru.png' alt='Логотип университета' width={200} height={200} />

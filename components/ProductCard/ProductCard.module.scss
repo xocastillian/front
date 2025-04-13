@@ -7,11 +7,16 @@
 	cursor: pointer;
 	transition: transform 0.2s ease;
 
-	&:hover {
+	&:hover .img {
 		transform: translateY(-4px);
 	}
 
+	&:hover .descr {
+		color: #000;
+	}
+
 	.img {
+		transition: transform 0.2s ease;
 		width: 300px;
 		height: 300px;
 		border-radius: 10px;
@@ -48,6 +53,7 @@
 	}
 
 	.descr {
+		transition: color 0.2s ease;
 		font-size: 14px;
 		font-weight: 400;
 		color: #666;
