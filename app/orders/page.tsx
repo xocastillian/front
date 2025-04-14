@@ -1,39 +1,40 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import api from '@/lib/api/axios'
-import { OrderItem } from '@/types'
+import { Order } from '@/types'
 import { OrderCard } from '@/components/OrderCard/OrderCard'
-import { useAuthGuard } from '@/hooks/useAuthGuard'
-
-type Order = {
-	_id: string
-	items: OrderItem[]
-	totalPrice: number
-	status: string
-	createdAt: string
-}
+import { fetchOrders } from '@/lib/api/orders'
+import { useAuthStore } from '@/stores/auth-store'
+import { useGuestOrdersStore } from '@/stores/orders-store'
 
 export default function OrdersPage() {
-	useAuthGuard()
+	const isAuth = useAuthStore(state => state.isAuthenticated)
 	const [orders, setOrders] = useState<Order[]>([])
 	const [loading, setLoading] = useState(true)
 
+	const loadGuestOrders = useGuestOrdersStore(state => state.loadFromStorage)
+
 	useEffect(() => {
 		const load = async () => {
-			try {
-				const res = await api.get('/orders')
-				const orders = res.data
-				setOrders([...orders].reverse())
-			} catch (err) {
-				console.error('Ошибка при загрузке заказов:', err)
-			} finally {
+			if (isAuth) {
+				try {
+					const userOrders = await fetchOrders()
+					setOrders([...userOrders].reverse())
+				} catch (err) {
+					console.error('Ошибка при загрузке заказов:', err)
+				} finally {
+					setLoading(false)
+				}
+			} else {
+				loadGuestOrders()
+				const updated = useGuestOrdersStore.getState().orders
+				setOrders([...updated].reverse())
 				setLoading(false)
 			}
 		}
 
 		load()
-	}, [])
+	}, [isAuth])
 
 	return (
 		<div className='max-w-4xl mx-auto px-6 py-14'>

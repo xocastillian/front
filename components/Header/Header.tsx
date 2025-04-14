@@ -35,11 +35,9 @@ export default function Header() {
 					)}
 				</Button>
 
-				{isAuthenticated && (
-					<Button variant='ghost' onClick={() => router.push('/orders')}>
-						<PackageCheck className='h-5 w-5' />
-					</Button>
-				)}
+				<Button variant='ghost' onClick={() => router.push('/orders')}>
+					<PackageCheck className='h-5 w-5' />
+				</Button>
 
 				{isAuthenticated && profile?.role === 'admin' && (
 					<Button variant='outline' onClick={() => router.push('/admin/new')}>

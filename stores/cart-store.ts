@@ -3,6 +3,7 @@ import { Product, RawCartItem } from '@/types'
 import api from '@/lib/api/axios'
 import { useAuthStore } from './auth-store'
 import { OrderFormData } from '@/lib/validation/orderSchema'
+import { useGuestOrdersStore } from './orders-store'
 
 export interface CartItem extends Product {
 	quantity: number
@@ -162,8 +163,25 @@ export const useCartStore = create<CartState>((set, get) => ({
 		}
 
 		try {
-			await api.post('/orders', orderDto)
+			const res = await api.post('/orders', orderDto)
 			get().clearCart()
+
+			const isAuth = useAuthStore.getState().isAuthenticated
+			if (!isAuth) {
+				const fullOrder = {
+					...res.data,
+					items: items.map(i => ({
+						productId: {
+							_id: i._id,
+							name: i.name,
+							imageUrl: i.imageUrl,
+						},
+						quantity: i.quantity,
+						price: i.price,
+					})),
+				}
+				useGuestOrdersStore.getState().addOrder(fullOrder)
+			}
 		} catch (err) {
 			console.error('Ошибка при оформлении заказа:', err)
 			throw err

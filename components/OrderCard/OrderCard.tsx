@@ -4,15 +4,7 @@ import { FC } from 'react'
 import Image from 'next/image'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-import { OrderItem, OrderStatus } from '@/types'
-
-type Order = {
-	_id: string
-	items: OrderItem[]
-	totalPrice: number
-	status: string
-	createdAt: string
-}
+import { Order, OrderStatus } from '@/types'
 
 interface OrderCardProps {
 	order: Order
@@ -35,18 +27,20 @@ export const OrderCard: FC<OrderCardProps> = ({ order }) => {
 	return (
 		<Card>
 			<CardHeader>
-				<CardTitle className='text-lg'>
-					Заказ от{' '}
-					{new Date(order.createdAt).toLocaleString('ru-RU', {
-						day: '2-digit',
-						month: '2-digit',
-						year: 'numeric',
-						hour: '2-digit',
-						minute: '2-digit',
-					})}
+				<CardTitle className='text-lg flex justify-between items-center'>
+					<span>№ {order.orderNumber}</span>
+					<span className='text-xs text-muted-foreground'>
+						{new Date(order.createdAt).toLocaleString('ru-RU', {
+							day: '2-digit',
+							month: '2-digit',
+							year: 'numeric',
+							hour: '2-digit',
+							minute: '2-digit',
+						})}
+					</span>
 				</CardTitle>
 
-				<p className='text-sm'>
+				<p className='text-sm mt-2'>
 					Статус: <span className={`px-2 py-1 rounded-md text-xs font-medium ${getStatusClass(order.status)}`}>{order.status}</span>
 				</p>
 			</CardHeader>
