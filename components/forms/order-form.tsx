@@ -61,12 +61,20 @@ export function OrderForm() {
 							<FormItem>
 								<FormLabel>Номер телефона *</FormLabel>
 								<FormControl>
-									<Input placeholder='+7 777 123 4567' {...field} />
+									<Input
+										{...field}
+										placeholder='+7 777 123 4567'
+										onChange={e => {
+											const formatted = e.target.value.replace(/[^\d+ ]/g, '').slice(0, 16)
+											field.onChange(formatted)
+										}}
+									/>
 								</FormControl>
 								<FormMessage />
 							</FormItem>
 						)}
 					/>
+
 					<FormField
 						control={form.control}
 						name='address'

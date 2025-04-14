@@ -15,11 +15,9 @@ export default function CartPage() {
 
 	const handleClear = async () => {
 		setClearing(true)
-		setTimeout(() => {
-			clearCart()
-			toast.success('Корзина очищена')
-			setClearing(false)
-		}, 600)
+		clearCart()
+		toast.success('Корзина очищена')
+		setClearing(false)
 	}
 
 	return (

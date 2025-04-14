@@ -82,7 +82,14 @@ export const RegisterForm = ({ onSubmit, isLoading }: RegisterFormProps) => {
 								<FormItem>
 									<FormLabel>Телефон</FormLabel>
 									<FormControl>
-										<Input placeholder='+77071234567' {...field} />
+										<Input
+											{...field}
+											placeholder='+7 777 123 4567'
+											onChange={e => {
+												const formatted = e.target.value.replace(/[^\d+ ]/g, '').slice(0, 16)
+												field.onChange(formatted)
+											}}
+										/>
 									</FormControl>
 									<FormMessage />
 								</FormItem>

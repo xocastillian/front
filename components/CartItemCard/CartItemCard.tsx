@@ -18,28 +18,22 @@ export const CartItemCard: FC<CartItemCardProps> = ({ item }) => {
 
 	const handleRemove = () => {
 		setLoadingId(id)
-		setTimeout(() => {
-			removeFromCart(id)
-			toast.success('Товар удалён из корзины')
-			setLoadingId(null)
-		}, 400)
+		removeFromCart(id)
+		toast.success('Товар удалён из корзины')
+		setLoadingId(null)
 	}
 
 	const increment = () => {
 		setLoadingId(id)
-		setTimeout(() => {
-			updateQuantity(id, item.quantity + 1)
-			setLoadingId(null)
-		}, 200)
+		updateQuantity(id, item.quantity + 1)
+		setLoadingId(null)
 	}
 
 	const decrement = () => {
 		if (item.quantity <= 1) return
 		setLoadingId(id)
-		setTimeout(() => {
-			updateQuantity(id, item.quantity - 1)
-			setLoadingId(null)
-		}, 200)
+		updateQuantity(id, item.quantity - 1)
+		setLoadingId(null)
 	}
 
 	return (
@@ -50,7 +44,6 @@ export const CartItemCard: FC<CartItemCardProps> = ({ item }) => {
 				</div>
 			)}
 
-			{/* Контент */}
 			<div className='flex justify-between items-center w-full'>
 				<div>
 					<p className='font-semibold'>{item.name}</p>
