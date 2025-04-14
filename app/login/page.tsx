@@ -6,15 +6,16 @@ import { LoginFormData } from '@/lib/validation/loginSchema'
 import { loginUser } from '@/lib/api/auth'
 import { useRedirectIfAuthenticated } from '@/hooks/useRedirectIfAuthenticated'
 import { useState } from 'react'
+import { useForm } from 'react-hook-form'
 
 export default function LoginPage() {
 	const router = useRouter()
 	useRedirectIfAuthenticated()
 	const [loading, setLoading] = useState(false)
 
-	const handleLogin = async (data: LoginFormData) => {
+	const handleLogin = async (data: LoginFormData, form: ReturnType<typeof useForm<LoginFormData>>) => {
 		setLoading(true)
-		const success = await loginUser(data)
+		const success = await loginUser(data, form)
 		setLoading(false)
 		if (success) router.replace('/')
 	}

@@ -43,6 +43,7 @@ export enum OrderStatus {
 	Delivered = 'delivered',
 	Canceled = 'canceled',
 	Pending = 'pending',
+	Handled_To_Courier = 'handed_to_courier',
 }
 
 export interface Order {

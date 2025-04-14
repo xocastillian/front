@@ -10,7 +10,6 @@ import { CategoryFormData } from '@/lib/validation/categorySchema'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { CreateTab } from '@/components/CreateTab/CreateTab'
 import { OrdersTab } from '@/components/OrdersTab/OrdersTab'
-import { getSocket } from '@/lib/api/ordersSocket'
 import { toast } from 'sonner'
 import { Loader } from '@/components/Loader/Loader'
 import { useAuthGuard } from '@/hooks/useAuthGuard'
@@ -39,29 +38,23 @@ export default function AdminPanelPage() {
 	}, [])
 
 	useEffect(() => {
+		const hasNew = localStorage.getItem('has_new_order') === '1'
+		setHasNewOrder(hasNew)
+	}, [])
+
+	useEffect(() => {
 		fetchAllOrdersForAdmin()
 			.then(setOrders)
 			.catch(err => {
 				console.error('Ошибка при получении заказов администратора:', err)
 				toast.error('Не удалось загрузить заказы')
 			})
-
-		const socket = getSocket()
-		socket.on('order:new', (order: Order) => {
-			setOrders(prev => [order, ...prev])
-			if (activeSection !== 'orders') {
-				setHasNewOrder(true)
-			}
-		})
-
-		return () => {
-			socket.off('order:new')
-		}
-	}, [activeSection])
+	}, [])
 
 	useEffect(() => {
 		if (activeSection === 'orders') {
 			setHasNewOrder(false)
+			localStorage.removeItem('has_new_order')
 		}
 	}, [activeSection])
 

@@ -60,6 +60,13 @@ export function OrderDetails({ order, open, onOpenChange, onStatusChange, updati
 							Принят
 						</Button>
 						<Button
+							disabled={updating || order.status === OrderStatus.Handled_To_Courier}
+							variant='outline'
+							onClick={() => onStatusChange(OrderStatus.Handled_To_Courier)}
+						>
+							Передан курьеру
+						</Button>
+						<Button
 							disabled={updating || order.status === OrderStatus.Delivered}
 							variant='outline'
 							onClick={() => onStatusChange(OrderStatus.Delivered)}

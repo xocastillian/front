@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { format } from 'date-fns'
 import { Tabs } from '../Tabs/Tabs'
 import { OrderDetails } from '../OrderDetails/OrderDetails'
+import { getOrderStatusColor } from '@/utils'
 
 interface OrdersTabProps {
 	orders: Order[]
@@ -15,6 +16,7 @@ interface OrdersTabProps {
 const statusTabs = [
 	{ id: OrderStatus.Pending, name: 'Ожидает' },
 	{ id: OrderStatus.Accepted, name: 'Принят' },
+	{ id: OrderStatus.Handled_To_Courier, name: 'Передан курьеру' },
 	{ id: OrderStatus.Delivered, name: 'Доставлен' },
 	{ id: OrderStatus.Canceled, name: 'Отменён' },
 ] as const
@@ -23,19 +25,6 @@ export const OrdersTab = ({ orders, onUpdateOrderStatus }: OrdersTabProps) => {
 	const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
 	const [updating, setUpdating] = useState(false)
 	const [selectedStatus, setSelectedStatus] = useState<string | null>(null)
-
-	const getCardColor = (status: Order['status']) => {
-		switch (status) {
-			case OrderStatus.Accepted:
-				return 'bg-yellow-100'
-			case OrderStatus.Canceled:
-				return 'bg-red-100'
-			case OrderStatus.Delivered:
-				return 'bg-green-100'
-			default:
-				return 'bg-white'
-		}
-	}
 
 	const handleStatusChange = async (orderId: string, status: OrderStatus) => {
 		setUpdating(true)
@@ -74,7 +63,7 @@ export const OrdersTab = ({ orders, onUpdateOrderStatus }: OrdersTabProps) => {
 								onStatusChange={status => handleStatusChange(order._id, status)}
 								updating={updating}
 								trigger={
-									<Card className={`${getCardColor(order.status)} cursor-pointer hover:shadow-md transition`}>
+									<Card className={`${getOrderStatusColor(order.status)} cursor-pointer hover:shadow-md transition`}>
 										<CardHeader>
 											<CardTitle className='text-base'>Заказ № {order.orderNumber}</CardTitle>
 										</CardHeader>

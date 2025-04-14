@@ -3,6 +3,8 @@ import { AxiosError } from 'axios'
 import { RegisterFormData, RegisterResponseSchema } from '@/lib/validation/registerSchema'
 import { LoginFormData, LoginResponseSchema } from '@/lib/validation/loginSchema'
 import { useAuthStore } from '@/stores/auth-store'
+import { useForm } from 'react-hook-form'
+import { getSocket } from './ordersSocket'
 
 export async function registerUser(data: RegisterFormData): Promise<boolean> {
 	try {
@@ -29,7 +31,7 @@ export async function registerUser(data: RegisterFormData): Promise<boolean> {
 	}
 }
 
-export async function loginUser(data: LoginFormData): Promise<boolean> {
+export async function loginUser(data: LoginFormData, form?: ReturnType<typeof useForm<LoginFormData>>): Promise<boolean> {
 	try {
 		const res = await api.post('/auth/login', data)
 
@@ -39,17 +41,21 @@ export async function loginUser(data: LoginFormData): Promise<boolean> {
 		const { access_token, refresh_token, user } = parsed.data
 		useAuthStore.getState().login(user, access_token, refresh_token)
 
-		return true
-	} catch (error) {
-		let message = 'Ошибка при входе'
-
-		if (error instanceof AxiosError) {
-			message = error.response?.data?.message || error.response?.data?.error || message
-		} else if (error instanceof Error) {
-			message = error.message
+		if (user.role === 'admin') {
+			const socket = getSocket()
+			socket.on('order:new', () => {
+				localStorage.setItem('has_new_order', '1')
+			})
 		}
 
-		alert(message)
+		return true
+	} catch (error) {
+		console.error(error)
+		if (form) {
+			form.setError('email', { type: 'manual', message: 'Неверный email или пароль' })
+			form.setError('password', { type: 'manual', message: ' ' })
+		}
+
 		return false
 	}
 }

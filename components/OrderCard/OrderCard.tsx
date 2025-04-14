@@ -4,23 +4,11 @@ import { FC } from 'react'
 import Image from 'next/image'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-import { Order, OrderStatus } from '@/types'
+import { Order } from '@/types'
+import { getOrderStatusColor } from '@/utils'
 
 interface OrderCardProps {
 	order: Order
-}
-
-const getStatusClass = (status: string) => {
-	switch (status) {
-		case OrderStatus.Accepted:
-			return 'bg-yellow-100 text-yellow-800'
-		case OrderStatus.Canceled:
-			return 'bg-red-100 text-red-800'
-		case OrderStatus.Delivered:
-			return 'bg-green-100 text-green-800'
-		default:
-			return 'bg-gray-100 text-gray-800'
-	}
 }
 
 export const OrderCard: FC<OrderCardProps> = ({ order }) => {
@@ -41,7 +29,7 @@ export const OrderCard: FC<OrderCardProps> = ({ order }) => {
 				</CardTitle>
 
 				<p className='text-sm mt-2'>
-					Статус: <span className={`px-2 py-1 rounded-md text-xs font-medium ${getStatusClass(order.status)}`}>{order.status}</span>
+					Статус: <span className={`px-2 py-1 rounded-md text-xs font-medium ${getOrderStatusColor(order.status)}`}>{order.status}</span>
 				</p>
 			</CardHeader>
 

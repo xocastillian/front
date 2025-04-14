@@ -11,7 +11,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Loader } from '../Loader/Loader'
 
 type Props = {
-	onSubmit: (data: LoginFormData) => void
+	onSubmit: (data: LoginFormData, form: ReturnType<typeof useForm<LoginFormData>>) => void
 	isLoading?: boolean
 }
 
@@ -33,7 +33,7 @@ export function LoginForm({ onSubmit, isLoading }: Props) {
 			</CardHeader>
 			<CardContent>
 				<Form {...form}>
-					<form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
+					<form onSubmit={form.handleSubmit(data => onSubmit(data, form))} className='space-y-4'>
 						<FormField
 							control={form.control}
 							name='email'
