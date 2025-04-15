@@ -4,7 +4,6 @@ import { RegisterFormData, RegisterResponseSchema } from '@/lib/validation/regis
 import { LoginFormData, LoginResponseSchema } from '@/lib/validation/loginSchema'
 import { useAuthStore } from '@/stores/auth-store'
 import { useForm } from 'react-hook-form'
-import { getSocket } from './ordersSocket'
 
 export async function registerUser(data: RegisterFormData): Promise<boolean> {
 	try {
@@ -40,13 +39,6 @@ export async function loginUser(data: LoginFormData, form?: ReturnType<typeof us
 
 		const { access_token, refresh_token, user } = parsed.data
 		useAuthStore.getState().login(user, access_token, refresh_token)
-
-		if (user.role === 'admin') {
-			const socket = getSocket()
-			socket.on('order:new', () => {
-				localStorage.setItem('has_new_order', '1')
-			})
-		}
 
 		return true
 	} catch (error) {

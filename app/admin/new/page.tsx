@@ -13,17 +13,18 @@ import { OrdersTab } from '@/components/OrdersTab/OrdersTab'
 import { toast } from 'sonner'
 import { Loader } from '@/components/Loader/Loader'
 import { useAuthGuard } from '@/hooks/useAuthGuard'
+import { getSocket } from '@/lib/api/ordersSocket'
 
 export default function AdminPanelPage() {
 	useAuthGuard('admin')
 
 	const [loadingProduct, setLoadingProduct] = useState(false)
 	const [loadingCategory, setLoadingCategory] = useState(false)
+	const [loadingProducts, setLoadingProducts] = useState(false)
 	const [categories, setCategories] = useState<Category[]>([])
+	const [products, setProducts] = useState<Product[]>([])
 	const [orders, setOrders] = useState<Order[]>([])
 	const [activeSection, setActiveSection] = useState<'create' | 'orders'>('create')
-	const [products, setProducts] = useState<Product[]>([])
-	const [loadingProducts, setLoadingProducts] = useState(false)
 	const [hasNewOrder, setHasNewOrder] = useState(false)
 
 	useEffect(() => {
@@ -34,12 +35,12 @@ export default function AdminPanelPage() {
 	}, [])
 
 	useEffect(() => {
-		fetchCategories().then(setCategories)
-	}, [])
-
-	useEffect(() => {
-		const hasNew = localStorage.getItem('has_new_order') === '1'
-		setHasNewOrder(hasNew)
+		fetchCategories()
+			.then(setCategories)
+			.catch(err => {
+				console.error('Ошибка при получении категорий:', err)
+				toast.error('Не удалось загрузить категории')
+			})
 	}, [])
 
 	useEffect(() => {
@@ -49,6 +50,40 @@ export default function AdminPanelPage() {
 				console.error('Ошибка при получении заказов администратора:', err)
 				toast.error('Не удалось загрузить заказы')
 			})
+	}, [])
+
+	useEffect(() => {
+		if (typeof window !== 'undefined') {
+			const socket = getSocket()
+
+			const handleNewOrder = (order: Order) => {
+				localStorage.setItem('has_new_order', '1')
+				setHasNewOrder(true)
+				setOrders(prev => [order, ...prev])
+			}
+
+			socket.on('order:new', handleNewOrder)
+
+			return () => {
+				socket.off('order:new', handleNewOrder)
+			}
+		}
+	}, [])
+
+	useEffect(() => {
+		const hasNew = localStorage.getItem('has_new_order') === '1'
+		setHasNewOrder(hasNew)
+
+		function handleStorage(event: StorageEvent) {
+			if (event.key === 'has_new_order') {
+				setHasNewOrder(event.newValue === '1')
+			}
+		}
+
+		window.addEventListener('storage', handleStorage)
+		return () => {
+			window.removeEventListener('storage', handleStorage)
+		}
 	}, [])
 
 	useEffect(() => {
@@ -62,7 +97,7 @@ export default function AdminPanelPage() {
 		setLoadingProduct(true)
 		try {
 			await createProduct(data)
-			const updated = await fetchProducts(1, 100)
+			const updated = await fetchProducts(1, 1000)
 			setProducts(updated)
 			toast.success('Товар создан')
 		} catch (err) {
@@ -77,7 +112,7 @@ export default function AdminPanelPage() {
 		setLoadingProduct(true)
 		try {
 			await updateProduct(id, data)
-			const updated = await fetchProducts(1, 100)
+			const updated = await fetchProducts(1, 1000)
 			setProducts(updated)
 			toast.success('Товар обновлён')
 		} catch (err) {
@@ -92,7 +127,7 @@ export default function AdminPanelPage() {
 		setLoadingProduct(true)
 		try {
 			await deleteProduct(id)
-			const updated = await fetchProducts(1, 100)
+			const updated = await fetchProducts(1, 1000)
 			setProducts(updated)
 			toast.success('Товар удалён')
 		} catch (err) {
@@ -135,8 +170,8 @@ export default function AdminPanelPage() {
 
 	const handleUpdateOrderStatus = async (orderId: string, status: OrderStatus) => {
 		try {
-			const updated = await updateOrderStatus(orderId, status)
-			setOrders(prev => prev.map(o => (o._id === updated._id ? { ...o, status: updated.status } : o)))
+			const updatedOrder = await updateOrderStatus(orderId, status)
+			setOrders(prev => prev.map(o => (o._id === updatedOrder._id ? { ...o, status: updatedOrder.status } : o)))
 			toast.success('Статус заказа обновлён')
 		} catch (err) {
 			console.error('Ошибка при обновлении статуса заказа:', err)
