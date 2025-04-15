@@ -11,6 +11,8 @@ RUN npm install
 # Копируем все остальные файлы
 COPY . .
 
+ENV NEXT_PUBLIC_API_URL=https://food-upnis.onrender.com
+
 # Сборка фронтенда
 RUN npm run build
 
