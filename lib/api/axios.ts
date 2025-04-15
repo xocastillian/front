@@ -1,8 +1,16 @@
 import axios from 'axios'
 import { useAuthStore } from '@/stores/auth-store'
 
+const getBaseURL = () => {
+	if (typeof window !== 'undefined') {
+		return process.env.NEXT_PUBLIC_API_URL
+	}
+
+	return process.env.NEXT_PUBLIC_API_URL || 'https://food-upnis.onrender.com'
+}
+
 const api = axios.create({
-	baseURL: process.env.NEXT_PUBLIC_API_URL,
+	baseURL: getBaseURL(),
 	withCredentials: true,
 	headers: {
 		'Content-Type': 'application/json',
@@ -10,7 +18,7 @@ const api = axios.create({
 })
 
 export const refreshClient = axios.create({
-	baseURL: process.env.NEXT_PUBLIC_API_URL,
+	baseURL: getBaseURL(),
 	withCredentials: true,
 	headers: {
 		'Content-Type': 'application/json',
