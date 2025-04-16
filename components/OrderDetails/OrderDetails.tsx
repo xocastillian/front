@@ -20,7 +20,7 @@ export function OrderDetails({ order, open, onOpenChange, onStatusChange, updati
 		<Dialog open={open} onOpenChange={onOpenChange}>
 			<DialogTrigger asChild>{trigger}</DialogTrigger>
 
-			<DialogContent>
+			<DialogContent className='max-w-[95vw] sm:max-w-lg w-full'>
 				<DialogTitle>Детали заказа</DialogTitle>
 
 				<div className='space-y-3 text-sm'>
@@ -51,7 +51,7 @@ export function OrderDetails({ order, open, onOpenChange, onStatusChange, updati
 						</ul>
 					</div>
 
-					<div className='pt-4 space-x-2'>
+					<div className='pt-4 flex flex-col sm:flex-row sm:flex-wrap gap-2'>
 						<Button
 							disabled={updating || order.status === OrderStatus.Accepted}
 							variant='outline'

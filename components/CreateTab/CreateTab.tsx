@@ -106,7 +106,7 @@ export const CreateTab = ({
 				</DialogContent>
 			</Dialog>
 
-			<div className='flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6'>
+			<div className='flex flex-col xl:flex-row xl:justify-between xl:items-center gap-4 mb-6'>
 				<Tabs
 					items={categories.map(c => ({ id: c._id, name: c.name }))}
 					selected={selectedCategory}
@@ -116,9 +116,15 @@ export const CreateTab = ({
 					onDeleteCategory={onDeleteCategory}
 				/>
 
-				<div className='flex gap-4'>
-					<Input type='text' placeholder='Поиск по имени...' value={search} onChange={e => setSearch(e.target.value)} className='w-full max-w-md' />
-					<SortBox value={sort} onChange={setSort} options={sortOptions} placeholder='Сортировка...' widthClass='w-[220px]' />
+				<div className='flex flex-col xl:flex-row gap-4 w-full xl:w-auto'>
+					<Input
+						type='text'
+						placeholder='Поиск по имени...'
+						value={search}
+						onChange={e => setSearch(e.target.value)}
+						className='w-full xl:max-w-md'
+					/>
+					<SortBox value={sort} onChange={setSort} options={sortOptions} placeholder='Сортировка...' widthClass='xl:w-[220px] w-full' />
 				</div>
 			</div>
 

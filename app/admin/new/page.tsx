@@ -196,7 +196,7 @@ export default function AdminPanelPage() {
 	]
 
 	return (
-		<div className='flex min-h-screen relative'>
+		<div className='flex flex-col xl:flex-row min-h-screen relative'>
 			{(loadingProducts || loadingProduct || loadingCategory) && <Loader />}
 
 			<Sidebar items={sidebarItems} />

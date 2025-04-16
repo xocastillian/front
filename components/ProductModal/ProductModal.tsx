@@ -43,10 +43,10 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
 
 	return (
 		<Dialog open onOpenChange={onClose}>
-			<DialogContent className='w-fit max-w-[95vw] min-w-[800px] h-[400px] p-0 overflow-hidden border-0 ring-0 outline-none shadow-none'>
+			<DialogContent className='w-auto max-w-3xl sm:max-w-4xl p-0 overflow-hidden border-0 ring-0 outline-none shadow-none'>
 				<div className='flex flex-col md:flex-row items-stretch h-full'>
 					{product.imageUrl && (
-						<div className='relative w-[400px] h-[400px] flex-shrink-0'>
+						<div className='relative w-full h-[250px] md:w-[400px] md:h-[400px] flex-shrink-0'>
 							<Image src={product.imageUrl} alt={product.name} fill className='object-cover' sizes='(max-width: 768px) 100vw, 300px' />
 						</div>
 					)}

@@ -27,7 +27,7 @@ export function LoginForm({ onSubmit, isLoading }: Props) {
 	return isLoading ? (
 		<Loader />
 	) : (
-		<Card className='w-[400px]'>
+		<Card className='w-full sm:max-w-sm md:max-w-md lg:max-w-lg'>
 			<CardHeader>
 				<CardTitle>Вход</CardTitle>
 			</CardHeader>

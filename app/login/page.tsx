@@ -21,7 +21,7 @@ export default function LoginPage() {
 	}
 
 	return (
-		<div className='flex justify-center items-center min-h-screen'>
+		<div className='flex justify-center items-center min-h-screen px-4 py-12'>
 			<LoginForm onSubmit={handleLogin} isLoading={loading} />
 		</div>
 	)

@@ -46,7 +46,7 @@ export const OrderCard: FC<OrderCardProps> = ({ order }) => {
 							</div>
 						)}
 
-						<div className='flex justify-between items-center w-full text-sm'>
+						<div className='flex flex-col sm:flex-row justify-between items-start sm:items-center w-full text-sm gap-1'>
 							<span>
 								{item.productId?.name ?? 'Товар удалён'} × {item.quantity}
 							</span>

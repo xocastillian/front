@@ -22,8 +22,11 @@ export function Tabs<T extends string | number>({
 	onAddCategoryClick,
 }: TabsProps<T>) {
 	return (
-		<div className='flex gap-2 overflow-auto'>
-			<button className={`px-4 py-2 rounded-full ${selected === null ? 'bg-black text-white' : 'bg-gray-200'}`} onClick={() => onSelect(null)}>
+		<div className='flex gap-2 overflow-x-auto scrollbar-none whitespace-nowrap [-webkit-overflow-scrolling:touch]'>
+			<button
+				className={`px-4 py-2 rounded-full flex-shrink-0 ${selected === null ? 'bg-black text-white' : 'bg-gray-200'}`}
+				onClick={() => onSelect(null)}
+			>
 				{allLabel}
 			</button>
 
@@ -31,7 +34,7 @@ export function Tabs<T extends string | number>({
 				const tabButton = (
 					<button
 						key={index}
-						className={`px-4 py-2 rounded-full ${selected === item.id ? 'bg-black text-white' : 'bg-gray-200'}`}
+						className={`px-4 py-2 rounded-full flex-shrink-0 ${selected === item.id ? 'bg-black text-white' : 'bg-gray-200'}`}
 						onClick={() => onSelect(item.id)}
 					>
 						{item.name}
@@ -53,7 +56,7 @@ export function Tabs<T extends string | number>({
 			})}
 
 			{isAdminPanel && onAddCategoryClick && (
-				<button className='px-4 py-2 rounded-full bg-blue-500 text-white' onClick={onAddCategoryClick}>
+				<button className='px-4 py-2 rounded-full bg-blue-500 text-white flex-shrink-0' onClick={onAddCategoryClick}>
 					Добавить категорию
 				</button>
 			)}

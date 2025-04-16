@@ -53,7 +53,7 @@ export function OrderForm() {
 		<div className='relative'>
 			{loading && <Loader />}
 			<Form {...form}>
-				<form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
+				<form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4 w-full pt-4 sm:pt-6'>
 					<FormField
 						control={form.control}
 						name='phone'

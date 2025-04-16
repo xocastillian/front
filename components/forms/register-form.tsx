@@ -29,7 +29,7 @@ export const RegisterForm = ({ onSubmit, isLoading }: RegisterFormProps) => {
 	return isLoading ? (
 		<Loader />
 	) : (
-		<Card className='w-[400px]'>
+		<Card className='w-full sm:max-w-sm md:max-w-md lg:max-w-lg'>
 			<CardHeader>
 				<CardTitle>Регистрация</CardTitle>
 			</CardHeader>

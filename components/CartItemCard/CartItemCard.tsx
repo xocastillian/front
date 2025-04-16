@@ -37,15 +37,15 @@ export const CartItemCard: FC<CartItemCardProps> = ({ item }) => {
 	}
 
 	return (
-		<div className='border p-4 rounded-xl flex items-center gap-4'>
+		<div className='border p-4 rounded-xl flex flex-col sm:flex-row sm:items-center gap-4'>
 			{item.imageUrl && (
-				<div className='relative w-24 h-24 flex-shrink-0 rounded-md overflow-hidden'>
+				<div className='relative w-24 h-24 flex-shrink-0 rounded-md overflow-hidden mx-auto sm:mx-0'>
 					<Image src={item.imageUrl} alt={item.name} fill className='object-cover' />
 				</div>
 			)}
 
-			<div className='flex justify-between items-center w-full'>
-				<div>
+			<div className='flex flex-col sm:flex-row justify-between items-center sm:items-center text-center sm:text-left w-full gap-4'>
+				<div className='flex flex-col items-center sm:items-start'>
 					<p className='font-semibold'>{item.name}</p>
 					<div className='text-sm text-muted-foreground mb-1'>
 						{item.price} ₸ × {item.quantity}

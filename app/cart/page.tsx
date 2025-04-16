@@ -21,7 +21,7 @@ export default function CartPage() {
 	}
 
 	return (
-		<div className='relative px-6 py-14 max-w-3xl mx-auto'>
+		<div className='relative px-4 sm:px-6 py-14 max-w-3xl mx-auto'>
 			{clearing && <Loader />}
 			<h1 className='text-2xl font-bold mb-6'>Корзина</h1>
 

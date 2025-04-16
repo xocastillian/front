@@ -32,22 +32,24 @@ export const ProductList = ({ products, loading, onLoadMore, hasMore, isAdminPan
 					<Plus className='mr-2' size={24} />
 				</div>
 			)}
-			<div className='mx-auto mt-5 grid grid-cols-4 gap-x-[30px] gap-y-[60px] max-w-[1360px]'>
-				{products.map(product => (
-					<ProductCard
-						key={product._id}
-						product={product}
-						onClick={() => {
-							if (isAdminPanel) {
-								onProductClick?.(product)
-							} else {
-								setSelectedProduct(product)
-							}
-						}}
-					/>
-				))}
+			<div className='mt-5 flex justify-center'>
+				<div className='mx-auto mt-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-12'>
+					{products.map(product => (
+						<ProductCard
+							key={product._id}
+							product={product}
+							onClick={() => {
+								if (isAdminPanel) {
+									onProductClick?.(product)
+								} else {
+									setSelectedProduct(product)
+								}
+							}}
+						/>
+					))}
 
-				{loading && Array.from({ length: 3 }).map((_, i) => <Skeleton key={`skeleton-${i}`} className='h-40 w-full rounded-xl' />)}
+					{loading && Array.from({ length: 3 }).map((_, i) => <Skeleton key={`skeleton-${i}`} className='h-40 w-full rounded-xl' />)}
+				</div>
 			</div>
 
 			{hasMore && (

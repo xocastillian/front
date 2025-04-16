@@ -12,16 +12,16 @@ export const Footer = () => {
 	}, [])
 
 	return (
-		<footer className='w-full bg-black text-white border-t border-neutral-800 py-8'>
-			<div className='container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-6 text-sm'>
+		<footer className='w-full bg-black text-white border-t border-neutral-800 px-4 py-10'>
+			<div className='max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 text-sm'>
 				<div>
-					<h2 className='font-semibold text-lg text-white mb-2'>FOOD UPНИСЬ!</h2>
+					<h2 className='font-semibold text-xl mb-2'>FOOD UPНИСЬ!</h2>
 					<p>Выполнил: Кулясов Тимофей</p>
 					<p>Группа: ПИ 22-1 Р (кол)</p>
 				</div>
 
 				<div>
-					<h3 className='font-medium mb-2'>Навигация</h3>
+					<h3 className='font-medium text-base mb-2'>Навигация</h3>
 					<ul className='space-y-1'>
 						<li>
 							<Link href='/' className='hover:underline'>
@@ -42,11 +42,11 @@ export const Footer = () => {
 				</div>
 
 				<div>
-					<h3 className='font-medium mb-2'>Контакты</h3>
+					<h3 className='font-medium text-base mb-2'>Контакты</h3>
 					<ul className='space-y-1'>
 						<li>
 							Email:{' '}
-							<a href='mailto:xocastillian@gmail.com' className='hover:underline'>
+							<a href='mailto:xocastillian@gmail.com' className='hover:underline break-words'>
 								xocastillian@gmail.com
 							</a>
 						</li>
@@ -61,10 +61,16 @@ export const Footer = () => {
 				</div>
 			</div>
 
-			{year !== null && <div className='mt-8 text-center text-xs'>&copy; {year} FOOD UPНИСЬ! Дипломная работа.</div>}
+			{year !== null && <div className='mt-8 text-center text-xs text-neutral-400'>&copy; {year} FOOD UPНИСЬ! Дипломная работа.</div>}
 
 			<div className='mt-6 flex justify-center'>
-				<Image src='/LOGO_NEW_ru.png' alt='Логотип университета' width={200} height={200} />
+				<Image
+					src='/LOGO_NEW_ru.png'
+					alt='Логотип университета'
+					width={160}
+					height={160}
+					className='h-auto w-32 sm:w-40 md:w-44 lg:w-52 object-contain'
+				/>
 			</div>
 		</footer>
 	)
