@@ -100,7 +100,7 @@ export const CreateTab = ({
 				<DialogContent>
 					<DialogTitle>Добавить товар</DialogTitle>
 					<ProductForm onSubmit={handleCreateProduct} isLoading={loadingProduct} categories={categories} onDirtyChange={setIsDirty} />
-					<div className='pt-4 flex justify-end'>
+					<div className='flex justify-end'>
 						<Button type='submit' form='product-form' disabled={loadingProduct}>
 							{loadingProduct ? <Loader2 className='w-4 h-4 mr-2 animate-spin' /> : 'Создать'}
 						</Button>
