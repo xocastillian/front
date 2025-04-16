@@ -12,6 +12,9 @@ import { useDebounce } from '@/hooks/useDebounce'
 import { Category, Product } from '@/types'
 import { ProductFormData } from '@/lib/validation/productSchema'
 import { CategoryFormData } from '@/lib/validation/categorySchema'
+import { Button } from '../ui/button'
+import { ConfirmDialog } from '../ConfirmDialog/ConfirmDialog'
+import { Loader2 } from 'lucide-react'
 
 interface Props {
 	categories: Category[]
@@ -53,6 +56,7 @@ export const CreateTab = ({
 	const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
 	const [search, setSearch] = useState('')
 	const [sort, setSort] = useState('')
+	const [isDirty, setIsDirty] = useState(false)
 	const debouncedSearch = useDebounce(search, 500)
 
 	const handleCreateProduct = async (data: ProductFormData) => {
@@ -95,7 +99,12 @@ export const CreateTab = ({
 			<Dialog open={openProduct} onOpenChange={setOpenProduct}>
 				<DialogContent>
 					<DialogTitle>Добавить товар</DialogTitle>
-					<ProductForm onSubmit={handleCreateProduct} isLoading={loadingProduct} categories={categories} />
+					<ProductForm onSubmit={handleCreateProduct} isLoading={loadingProduct} categories={categories} onDirtyChange={setIsDirty} />
+					<div className='pt-4 flex justify-end'>
+						<Button type='submit' form='product-form' disabled={loadingProduct}>
+							{loadingProduct ? <Loader2 className='w-4 h-4 mr-2 animate-spin' /> : 'Создать'}
+						</Button>
+					</div>
 				</DialogContent>
 			</Dialog>
 
@@ -145,8 +154,21 @@ export const CreateTab = ({
 						isLoading={loadingProduct}
 						onSubmit={handleEditSubmit}
 						initialData={editingProduct}
-						onDelete={handleDelete}
+						onDirtyChange={setIsDirty}
 					/>
+					<div className='flex items-center gap-4'>
+						{editingProduct && (
+							<ConfirmDialog
+								trigger={<Button variant='destructive'>Удалить товар</Button>}
+								title='Удаление товара'
+								description='Вы уверены, что хотите удалить этот товар?'
+								onConfirm={handleDelete}
+							/>
+						)}
+						<Button type='submit' form='product-form' disabled={loadingProduct || !isDirty}>
+							{loadingProduct ? <Loader2 className='w-4 h-4 mr-2 animate-spin' /> : 'Сохранить'}
+						</Button>
+					</div>
 				</DialogContent>
 			</Dialog>
 		</div>

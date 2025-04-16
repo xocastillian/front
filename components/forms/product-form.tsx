@@ -1,3 +1,4 @@
+// --- ProductForm.tsx ---
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -7,21 +8,21 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { ImagePlus, Loader2, X } from 'lucide-react'
+import { ImagePlus, X } from 'lucide-react'
 import { Form, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Category, Product } from '@/types'
 import { ProductFormData, createProductSchema, updateProductSchema } from '@/lib/validation/productSchema'
-import { ConfirmDialog } from '../ConfirmDialog/ConfirmDialog'
 
-type Props = {
+interface Props {
 	categories: Category[]
 	isLoading: boolean
 	onSubmit: (data: ProductFormData) => void
 	initialData?: Product | null
 	onDelete?: () => void
+	onDirtyChange?: (dirty: boolean) => void
 }
 
-export function ProductForm({ categories, isLoading, onSubmit, initialData, onDelete }: Props) {
+export function ProductForm({ categories, isLoading, onSubmit, initialData, onDirtyChange }: Props) {
 	const form = useForm<ProductFormData>({
 		resolver: zodResolver(initialData ? updateProductSchema : createProductSchema),
 		defaultValues: {
@@ -34,22 +35,15 @@ export function ProductForm({ categories, isLoading, onSubmit, initialData, onDe
 		},
 	})
 
-	const {
-		handleSubmit,
-		control,
-		register,
-		formState: { isDirty },
-	} = form
-
-	const { fields, append, remove } = useFieldArray({
-		control: form.control,
-		name: 'options',
-	})
-
+	const { handleSubmit, control, register, formState } = form
+	const { fields, append, remove } = useFieldArray({ control, name: 'options' })
 	const imageFileList = useWatch({ control, name: 'image' })
 	const imageFile = imageFileList?.[0]
-
 	const [preview, setPreview] = useState<string | null>(null)
+
+	useEffect(() => {
+		onDirtyChange?.(formState.isDirty)
+	}, [formState.isDirty, onDirtyChange])
 
 	useEffect(() => {
 		if (imageFile) {
@@ -64,7 +58,11 @@ export function ProductForm({ categories, isLoading, onSubmit, initialData, onDe
 
 	return (
 		<Form {...form}>
-			<form onSubmit={handleSubmit(onSubmit)} className='space-y-4 max-h-[calc(100vh-100px)] overflow-y-auto'>
+			<form
+				id='product-form'
+				onSubmit={handleSubmit(onSubmit)}
+				className='space-y-4 overflow-y-auto sm:max-h-[calc(100vh-100px)] max-h-[calc(100dvh-250px)]'
+			>
 				<fieldset disabled={isLoading} className='space-y-4'>
 					<FormField
 						name='name'
@@ -176,25 +174,6 @@ export function ProductForm({ categories, isLoading, onSubmit, initialData, onDe
 						</Button>
 					</div>
 				</fieldset>
-
-				<div className='flex items-center gap-4'>
-					{initialData && onDelete && (
-						<ConfirmDialog
-							trigger={
-								<Button type='button' variant='destructive'>
-									Удалить товар
-								</Button>
-							}
-							title='Удаление товара'
-							description='Вы уверены, что хотите удалить этот товар?'
-							onConfirm={onDelete}
-						/>
-					)}
-
-					<Button type='submit' disabled={isLoading || (!!initialData && !isDirty)}>
-						{isLoading ? <Loader2 className='w-4 h-4 mr-2 animate-spin' /> : initialData ? 'Сохранить' : 'Создать'}
-					</Button>
-				</div>
 			</form>
 		</Form>
 	)
