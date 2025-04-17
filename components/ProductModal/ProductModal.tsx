@@ -8,6 +8,7 @@ import { CartItem, useCartStore } from '@/stores/cart-store'
 import { Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import Image from 'next/image'
+import { QuantityCounter } from '../QuantityCounter/QuantityCounter'
 
 interface ProductModalProps {
 	product: Product
@@ -15,9 +16,11 @@ interface ProductModalProps {
 }
 
 export function ProductModal({ product, onClose }: ProductModalProps) {
-	const [quantity, setQuantity] = useState(1)
-	const [loading, setLoading] = useState(false)
+	const cartItems = useCartStore(state => state.items)
 	const addToCart = useCartStore(state => state.addToCart)
+	const cartItem = cartItems.find(i => i._id === product._id)
+	const [quantity, setQuantity] = useState(cartItem?.quantity || 1)
+	const [loading, setLoading] = useState(false)
 
 	const handleAddToCart = async () => {
 		setLoading(true)
@@ -68,17 +71,7 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
 									</ul>
 								)}
 
-								<div className='flex items-center gap-4 mt-4'>
-									<div className='flex items-center border rounded-md'>
-										<Button type='button' size='sm' variant='default' onClick={decrement} className='rounded-l-md'>
-											−
-										</Button>
-										<div className='w-10 text-center select-none'>{quantity}</div>
-										<Button type='button' size='sm' variant='default' onClick={increment} className='rounded-r-md'>
-											+
-										</Button>
-									</div>
-								</div>
+								<QuantityCounter value={quantity} onIncrement={increment} onDecrement={decrement} />
 							</div>
 						</div>
 

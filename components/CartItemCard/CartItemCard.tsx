@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Trash2, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import clsx from 'clsx'
+import { QuantityCounter } from '../QuantityCounter/QuantityCounter'
 
 interface CartItemCardProps {
 	item: CartItem
@@ -15,7 +16,6 @@ interface CartItemCardProps {
 export const CartItemCard: FC<CartItemCardProps> = ({ item }) => {
 	const removeFromCart = useCartStore(s => s.removeFromCart)
 	const updateQuantity = useCartStore(s => s.updateQuantity)
-
 	const [loadingId, setLoadingId] = useState<string | null>(null)
 	const id = item.cartItemId || item._id
 	const isLoading = loadingId === id
@@ -67,13 +67,7 @@ export const CartItemCard: FC<CartItemCardProps> = ({ item }) => {
 							{item.price} ₸ × {item.quantity}
 						</div>
 						<div className='flex items-center gap-2'>
-							<Button variant='outline' size='sm' onClick={decrement} disabled={isLoading || item.quantity <= 1}>
-								−
-							</Button>
-							<span className='w-6 text-center'>{item.quantity}</span>
-							<Button variant='outline' size='sm' onClick={increment} disabled={isLoading}>
-								+
-							</Button>
+							<QuantityCounter value={item.quantity} onIncrement={increment} onDecrement={decrement} />
 						</div>
 					</div>
 

@@ -13,6 +13,8 @@ import { useDebounce } from '@/hooks/useDebounce'
 import { useCartStore, CartItem } from '@/stores/cart-store'
 import { toast } from 'sonner'
 import { Loader } from '@/components/Loader/Loader'
+import { Button } from '@/components/ui/button'
+import { ShoppingCart } from 'lucide-react'
 
 const sortOptions = [
 	{ label: 'Без сортировки', value: '' },
@@ -50,7 +52,6 @@ export default function Home() {
 				cartItemId: product._id,
 			}
 			await addToCart(cartItem)
-			toast.success('Товар добавлен в корзину')
 		} catch (err) {
 			console.error('Ошибка при добавлении в корзину:', err)
 			toast.error('Не удалось добавить товар')
@@ -131,6 +132,21 @@ export default function Home() {
 					<p className='text-gray-500'>Нет товаров для отображения</p>
 				</div>
 			)}
+
+			<div className='sm:hidden fixed bottom-4 right-4 z-50'>
+				<Button
+					variant='secondary'
+					onClick={() => (window.location.href = '/cart')}
+					className='relative h-14 w-14 p-0 rounded-full shadow-lg backdrop-blur bg-white/80'
+				>
+					<ShoppingCart className='h-6 w-6' />
+					{cartItems.length > 0 && (
+						<span className='absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center'>
+							{cartItems.length}
+						</span>
+					)}
+				</Button>
+			</div>
 		</main>
 	)
 }
