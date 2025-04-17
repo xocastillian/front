@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { PackageCheck, ShoppingCart, Menu } from 'lucide-react'
+import { PackageCheck, ShoppingCart, Menu, User, Settings } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
@@ -30,6 +30,7 @@ export default function Header() {
 			<div className='hidden sm:flex items-center gap-4'>
 				<Button variant='ghost' onClick={() => router.push('/cart')} className='relative'>
 					<ShoppingCart className='h-5 w-5' />
+					Корзина
 					{cartItemCount > 0 && (
 						<span className='absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center'>
 							{cartItemCount}
@@ -39,18 +40,16 @@ export default function Header() {
 
 				<Button variant='ghost' onClick={() => router.push('/orders')}>
 					<PackageCheck className='h-5 w-5' />
+					Заказы
 				</Button>
-
-				{isAuthenticated && profile?.role === 'admin' && (
-					<Button variant='outline' onClick={() => router.push('/admin/new')}>
-						Админ панель
-					</Button>
-				)}
 
 				{isAuthenticated ? (
 					<Popover open={open} onOpenChange={setOpen}>
 						<PopoverTrigger asChild>
-							<Button variant='ghost'>{profile?.name || 'Аккаунт'}</Button>
+							<Button variant='ghost'>
+								<User className='h-5 w-5' />
+								{profile?.name || 'Аккаунт'}
+							</Button>
 						</PopoverTrigger>
 						<PopoverContent className='w-40 space-y-2'>
 							<Button
@@ -61,6 +60,7 @@ export default function Header() {
 								}}
 								className='w-full'
 							>
+								<User className='h-5 w-5' />
 								Профиль
 							</Button>
 							<Button variant='destructive' onClick={logout} className='w-full text-white'>
@@ -76,6 +76,13 @@ export default function Header() {
 						<Button onClick={() => router.push('/register')}>Зарегистрироваться</Button>
 					</div>
 				)}
+
+				{isAuthenticated && profile?.role === 'admin' && (
+					<Button variant='outline' onClick={() => router.push('/admin/new')}>
+						<Settings className='h-5 w-5' />
+						Админ панель
+					</Button>
+				)}
 			</div>
 
 			{/* Mobile <640px: Sheet */}
@@ -90,95 +97,118 @@ export default function Header() {
 						<SheetHeader>
 							<SheetTitle className='text-lg text-center'>Меню</SheetTitle>
 						</SheetHeader>
-						<div className='mt-6 flex flex-col gap-4'>
-							<Button
-								variant='ghost'
-								onClick={() => {
-									setSheetOpen(false)
-									router.push('/cart')
-								}}
-								className='relative w-fit mx-auto flex items-center gap-2'
-							>
-								<ShoppingCart className='h-5 w-5' />
-								Корзина
-								{cartItemCount > 0 && (
-									<span className='absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center'>
-										{cartItemCount}
-									</span>
-								)}
-							</Button>
+						<div className='sm:hidden'>
+							<Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+								<SheetTrigger asChild>
+									<button className='flex items-center justify-center'>
+										<Menu className='w-5 h-5' />
+									</button>
+								</SheetTrigger>
+								<SheetContent side='right' className='w-full max-w-none'>
+									<SheetHeader>
+										<SheetTitle className='text-lg text-center'>Меню</SheetTitle>
+									</SheetHeader>
+									<div className='mt-6 flex flex-col gap-4'>
+										{/* Аккаунт */}
+										{isAuthenticated && (
+											<Button
+												variant='ghost'
+												onClick={() => {
+													setSheetOpen(false)
+													router.push('/profile')
+												}}
+												className='w-[200px] mx-auto justify-center text-center'
+											>
+												{profile?.name || 'Аккаунт'}
+											</Button>
+										)}
 
-							<Button
-								variant='ghost'
-								onClick={() => {
-									setSheetOpen(false)
-									router.push('/orders')
-								}}
-								className='w-fit mx-auto flex items-center gap-2'
-							>
-								<PackageCheck className='h-5 w-5' />
-								Заказы
-							</Button>
+										{/* Корзина */}
+										<Button
+											variant='ghost'
+											onClick={() => {
+												setSheetOpen(false)
+												router.push('/cart')
+											}}
+											className='relative w-fit mx-auto flex items-center gap-2'
+										>
+											<ShoppingCart className='h-5 w-5' />
+											Корзина
+											{cartItemCount > 0 && (
+												<span className='absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center'>
+													{cartItemCount}
+												</span>
+											)}
+										</Button>
 
-							{isAuthenticated && profile?.role === 'admin' && (
-								<Button
-									variant='outline'
-									onClick={() => {
-										setSheetOpen(false)
-										router.push('/admin/new')
-									}}
-									className='w-[200px] mx-auto justify-center text-center'
-								>
-									Админ панель
-								</Button>
-							)}
+										{/* Заказы */}
+										<Button
+											variant='ghost'
+											onClick={() => {
+												setSheetOpen(false)
+												router.push('/orders')
+											}}
+											className='w-fit mx-auto flex items-center gap-2'
+										>
+											<PackageCheck className='h-5 w-5' />
+											Заказы
+										</Button>
 
-							{isAuthenticated ? (
-								<>
-									<Button
-										variant='ghost'
-										onClick={() => {
-											setSheetOpen(false)
-											router.push('/profile')
-										}}
-										className='w-[200px] mx-auto justify-center text-center'
-									>
-										{profile?.name || 'Аккаунт'}
-									</Button>
-									<Button
-										variant='destructive'
-										onClick={() => {
-											setSheetOpen(false)
-											logout()
-										}}
-										className='w-[200px] mx-auto justify-center text-center text-white'
-									>
-										Выйти
-									</Button>
-								</>
-							) : (
-								<>
-									<Button
-										variant='outline'
-										onClick={() => {
-											setSheetOpen(false)
-											router.push('/login')
-										}}
-										className='w-[200px] mx-auto justify-center text-center'
-									>
-										Войти
-									</Button>
-									<Button
-										onClick={() => {
-											setSheetOpen(false)
-											router.push('/register')
-										}}
-										className='w-[200px] mx-auto justify-center text-center'
-									>
-										Зарегистрироваться
-									</Button>
-								</>
-							)}
+										{/* Админ панель */}
+										{isAuthenticated && profile?.role === 'admin' && (
+											<Button
+												variant='outline'
+												onClick={() => {
+													setSheetOpen(false)
+													router.push('/admin/new')
+												}}
+												className='w-[200px] mx-auto justify-center text-center'
+											>
+												Админ панель
+											</Button>
+										)}
+
+										{/* Выйти */}
+										{isAuthenticated && (
+											<Button
+												variant='destructive'
+												onClick={() => {
+													setSheetOpen(false)
+													logout()
+												}}
+												className='w-[200px] mx-auto justify-center text-center text-white'
+											>
+												Выйти
+											</Button>
+										)}
+
+										{/* Войти / Зарегистрироваться */}
+										{!isAuthenticated && (
+											<>
+												<Button
+													variant='outline'
+													onClick={() => {
+														setSheetOpen(false)
+														router.push('/login')
+													}}
+													className='w-[200px] mx-auto justify-center text-center'
+												>
+													Войти
+												</Button>
+												<Button
+													onClick={() => {
+														setSheetOpen(false)
+														router.push('/register')
+													}}
+													className='w-[200px] mx-auto justify-center text-center'
+												>
+													Зарегистрироваться
+												</Button>
+											</>
+										)}
+									</div>
+								</SheetContent>
+							</Sheet>
 						</div>
 					</SheetContent>
 				</Sheet>
