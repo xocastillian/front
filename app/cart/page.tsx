@@ -15,7 +15,7 @@ export default function CartPage() {
 
 	const handleClear = async () => {
 		setClearing(true)
-		clearCart()
+		await clearCart()
 		toast.success('Корзина очищена')
 		setClearing(false)
 	}

@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { Skeleton } from '@/components/ui/skeleton'
 import { ProductCard } from '../ProductCard/ProductCard'
 import { ProductModal } from '../ProductModal/ProductModal'
 import { Product } from '@/types'
@@ -65,12 +64,10 @@ export const ProductList = ({
 							showAddToCart={!isAdminPanel}
 						/>
 					))}
-
-					{loading && Array.from({ length: 3 }).map((_, i) => <Skeleton key={`skeleton-${i}`} className='h-40 w-full rounded-xl' />)}
 				</div>
 			</div>
 
-			{hasMore && (
+			{hasMore && products.length > 10 && (
 				<div className='flex justify-center mt-6'>
 					<Button onClick={onLoadMore} disabled={loading}>
 						{loading ? 'Загрузка...' : 'Показать ещё'}

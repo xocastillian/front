@@ -95,13 +95,14 @@ export const useCartStore = create<CartState>((set, get) => ({
 		})
 	},
 
-	updateQuantity: (id, quantity) => {
+	updateQuantity: async (id, quantity) => {
 		if (quantity < 1) return
 		set(state => {
 			const updatedItems = state.items.map(i => (i.cartItemId === id || i._id === id ? { ...i, quantity } : i))
 			localStorage.setItem('guest_cart', JSON.stringify(updatedItems))
 			return { items: updatedItems }
 		})
+		return Promise.resolve()
 	},
 
 	removeFromCart: async id => {
@@ -117,11 +118,11 @@ export const useCartStore = create<CartState>((set, get) => ({
 			}
 		}
 
-		set(state => {
-			const updatedItems = state.items.filter(i => i.cartItemId !== id && i._id !== id)
-			localStorage.setItem('guest_cart', JSON.stringify(updatedItems))
-			return { items: updatedItems, cartItemCount: updatedItems.length }
-		})
+		const state = get()
+		const updatedItems = state.items.filter(i => i.cartItemId !== id && i._id !== id)
+		localStorage.setItem('guest_cart', JSON.stringify(updatedItems))
+		set({ items: updatedItems, cartItemCount: updatedItems.length })
+		return Promise.resolve()
 	},
 
 	clearCart: async () => {
@@ -148,6 +149,7 @@ export const useCartStore = create<CartState>((set, get) => ({
 
 		set({ items: [], cartItemCount: 0 })
 		localStorage.removeItem('guest_cart')
+		return Promise.resolve()
 	},
 
 	createOrder: async (data: OrderFormData) => {

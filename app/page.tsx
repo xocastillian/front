@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input'
 import { useDebounce } from '@/hooks/useDebounce'
 import { useCartStore, CartItem } from '@/stores/cart-store'
 import { toast } from 'sonner'
+import { Loader } from '@/components/Loader/Loader'
 
 const sortOptions = [
 	{ label: 'Без сортировки', value: '' },
@@ -108,26 +109,28 @@ export default function Home() {
 				<Tabs items={categories.map(c => ({ id: c._id, name: c.name }))} selected={selectedCategory} onSelect={handleTabClick} />
 
 				<div className='flex flex-col xl:flex-row gap-4 w-full xl:w-auto'>
-					<Input
-						type='text'
-						placeholder='Поиск по имени...'
-						value={search}
-						onChange={e => setSearch(e.target.value)}
-						className='w-full xl:max-w-md'
-					/>
+					<Input type='text' placeholder='Поиск...' value={search} onChange={e => setSearch(e.target.value)} className='w-full xl:max-w-md' />
 					<SortBox value={sort} onChange={handleSortChange} options={sortOptions} placeholder='Сортировка...' widthClass='xl:w-[220px] w-full' />
 				</div>
 			</div>
 
-			<ProductList
-				products={products}
-				loading={loading}
-				onLoadMore={handleLoadMore}
-				hasMore={hasMore}
-				onAddToCart={handleAddToCart}
-				getIsAdded={isProductAdded}
-				addingProductId={addingProductId ?? undefined}
-			/>
+			{loading && <Loader />}
+
+			{products.length > 0 ? (
+				<ProductList
+					products={products}
+					loading={loading}
+					onLoadMore={handleLoadMore}
+					hasMore={hasMore}
+					onAddToCart={handleAddToCart}
+					getIsAdded={isProductAdded}
+					addingProductId={addingProductId ?? undefined}
+				/>
+			) : (
+				<div className='flex items-center justify-center h-64'>
+					<p className='text-gray-500'>Нет товаров для отображения</p>
+				</div>
+			)}
 		</main>
 	)
 }

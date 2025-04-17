@@ -1,16 +1,17 @@
 'use client'
 
 import React from 'react'
+import { Loader2 } from 'lucide-react'
 
 export function Loader() {
 	return (
 		<div
-			className='fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm animate-fadeIn'
+			className='fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-[1px] animate-fadeIn'
 			role='status'
 			aria-live='polite'
 			aria-busy='true'
 		>
-			<div className='h-10 w-10 animate-spin rounded-full border-4 border-s-black border-t-transparent' />
+			<Loader2 className='h-14 w-14 animate-spin text-gray-100' />
 		</div>
 	)
 }

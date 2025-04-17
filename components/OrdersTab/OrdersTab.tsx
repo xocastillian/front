@@ -23,16 +23,16 @@ const statusTabs = [
 
 export const OrdersTab = ({ orders, onUpdateOrderStatus }: OrdersTabProps) => {
 	const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
-	const [updating, setUpdating] = useState(false)
+	const [loading, setLoading] = useState(false)
 	const [selectedStatus, setSelectedStatus] = useState<string | null>(null)
 
 	const handleStatusChange = async (orderId: string, status: OrderStatus) => {
-		setUpdating(true)
+		setLoading(true)
 		try {
 			await onUpdateOrderStatus(orderId, status)
 			setSelectedOrder(null)
 		} finally {
-			setUpdating(false)
+			setLoading(false)
 		}
 	}
 
@@ -61,7 +61,7 @@ export const OrdersTab = ({ orders, onUpdateOrderStatus }: OrdersTabProps) => {
 									else setSelectedOrder(order)
 								}}
 								onStatusChange={status => handleStatusChange(order._id, status)}
-								updating={updating}
+								loading={loading}
 								trigger={
 									<Card className={`${getOrderStatusColor(order.status)} cursor-pointer hover:shadow-md transition`}>
 										<CardHeader>

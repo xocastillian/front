@@ -98,11 +98,17 @@ export const CreateTab = ({
 		<div className='space-y-6 mx-auto'>
 			<Dialog open={openProduct} onOpenChange={setOpenProduct}>
 				<DialogContent>
+					{loadingProduct && <div className='absolute inset-0 z-10 flex items-center justify-center bg-white/50 backdrop-blur-sm rounded-xl' />}
+					{loadingProduct && (
+						<div className='absolute inset-0 z-50 flex items-center justify-center'>
+							<Loader2 className='w-6 h-6 animate-spin text-gray-500' />
+						</div>
+					)}
 					<DialogTitle>Добавить товар</DialogTitle>
 					<ProductForm onSubmit={handleCreateProduct} isLoading={loadingProduct} categories={categories} onDirtyChange={setIsDirty} />
 					<div className='flex justify-end'>
 						<Button type='submit' form='product-form' disabled={loadingProduct}>
-							{loadingProduct ? <Loader2 className='w-4 h-4 mr-2 animate-spin' /> : 'Создать'}
+							Создать
 						</Button>
 					</div>
 				</DialogContent>
@@ -126,13 +132,7 @@ export const CreateTab = ({
 				/>
 
 				<div className='flex flex-col xl:flex-row gap-4 w-full xl:w-auto'>
-					<Input
-						type='text'
-						placeholder='Поиск по имени...'
-						value={search}
-						onChange={e => setSearch(e.target.value)}
-						className='w-full xl:max-w-md'
-					/>
+					<Input type='text' placeholder='Поиск...' value={search} onChange={e => setSearch(e.target.value)} className='w-full xl:max-w-md' />
 					<SortBox value={sort} onChange={setSort} options={sortOptions} placeholder='Сортировка...' widthClass='xl:w-[220px] w-full' />
 				</div>
 			</div>
@@ -148,6 +148,12 @@ export const CreateTab = ({
 
 			<Dialog open={!!editingProduct} onOpenChange={() => setEditingProduct(null)}>
 				<DialogContent>
+					{loadingProduct && <div className='absolute inset-0 z-10 flex items-center justify-center bg-white/50 backdrop-blur-sm rounded-xl' />}
+					{loadingProduct && (
+						<div className='absolute inset-0 z-50 flex items-center justify-center'>
+							<Loader2 className='w-6 h-6 animate-spin text-gray-500' />
+						</div>
+					)}
 					<DialogTitle>Редактировать товар</DialogTitle>
 					<ProductForm
 						categories={categories}
@@ -166,7 +172,7 @@ export const CreateTab = ({
 							/>
 						)}
 						<Button type='submit' form='product-form' disabled={loadingProduct || !isDirty}>
-							{loadingProduct ? <Loader2 className='w-4 h-4 mr-2 animate-spin' /> : 'Сохранить'}
+							Сохранить
 						</Button>
 					</div>
 				</DialogContent>

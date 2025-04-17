@@ -24,7 +24,9 @@ export function Tabs<T extends string | number>({
 	return (
 		<div className='flex gap-2 overflow-x-auto scrollbar-none whitespace-nowrap [-webkit-overflow-scrolling:touch]'>
 			<button
-				className={`px-4 py-2 rounded-full flex-shrink-0 cursor-pointer ${selected === null ? 'bg-black text-white' : 'bg-gray-200'}`}
+				className={`px-4 py-2 rounded-full flex-shrink-0 cursor-pointer ${
+					selected === null ? 'bg-black text-white' : 'bg-gray-200 transition-colors duration-300 hover:bg-[#eeeeee]'
+				}`}
 				onClick={() => onSelect(null)}
 			>
 				{allLabel}
@@ -34,8 +36,8 @@ export function Tabs<T extends string | number>({
 				const tabButton = (
 					<button
 						key={index}
-						className={`px-4 py-2 rounded-full flex-shrink-0 cursor-pointer transition-colors duration-300 hover:bg-[#eeeeee] ${
-							selected === item.id ? 'bg-black text-white' : 'bg-gray-200'
+						className={`px-4 py-2 rounded-full flex-shrink-0 cursor-pointer ${
+							selected === item.id ? 'bg-black text-white' : 'bg-gray-200 transition-colors duration-300 hover:bg-[#eeeeee]'
 						}`}
 						onClick={() => onSelect(item.id)}
 					>

@@ -21,7 +21,7 @@ export function Sidebar({ items }: SidebarProps) {
 					<Button
 						key={item.label}
 						variant={item.active ? 'default' : 'ghost'}
-						className={`justify-between whitespace-nowrap transition-colors duration-300 ${item.active === false ? 'hover:bg-[#dddddd]' : ''}`}
+						className={`justify-between whitespace-nowrap transition-colors duration-300 ${item.active === false ? 'hover:bg-[#eeeeee]' : ''}`}
 						onClick={item.onClick}
 					>
 						<span className='flex items-center gap-2'>
