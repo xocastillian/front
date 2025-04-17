@@ -143,7 +143,7 @@ export default function Header() {
 										}}
 										className='w-[200px] mx-auto justify-center text-center'
 									>
-										Профиль
+										{profile?.name || 'Аккаунт'}
 									</Button>
 									<Button
 										variant='destructive'
