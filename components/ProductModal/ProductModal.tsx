@@ -8,7 +8,6 @@ import { CartItem, useCartStore } from '@/stores/cart-store'
 import { Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import Image from 'next/image'
-import { QuantityCounter } from '../QuantityCounter/QuantityCounter'
 
 interface ProductModalProps {
 	product: Product
@@ -16,10 +15,7 @@ interface ProductModalProps {
 }
 
 export function ProductModal({ product, onClose }: ProductModalProps) {
-	const cartItems = useCartStore(state => state.items)
 	const addToCart = useCartStore(state => state.addToCart)
-	const cartItem = cartItems.find(i => i._id === product._id)
-	const [quantity, setQuantity] = useState(cartItem?.quantity || 1)
 	const [loading, setLoading] = useState(false)
 
 	const handleAddToCart = async () => {
@@ -27,11 +23,10 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
 		try {
 			const cartItem: CartItem = {
 				...product,
-				quantity,
+				quantity: 1,
 				cartItemId: product._id,
 			}
 			await addToCart(cartItem)
-			toast.success('Товар добавлен в корзину')
 			onClose()
 		} catch (err) {
 			console.error('Ошибка при добавлении в корзину:', err)
@@ -41,16 +36,13 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
 		}
 	}
 
-	const increment = () => setQuantity(q => q + 1)
-	const decrement = () => setQuantity(q => (q > 1 ? q - 1 : 1))
-
 	return (
 		<Dialog open onOpenChange={onClose}>
 			<DialogContent className='w-auto max-w-3xl sm:max-w-4xl p-0 overflow-hidden border-0 ring-0 outline-none shadow-none'>
 				<div className='flex flex-col md:flex-row items-stretch h-full'>
 					{product.imageUrl && (
-						<div className='relative w-full h-[250px] md:w-[400px] md:h-[400px] flex-shrink-0'>
-							<Image src={product.imageUrl} alt={product.name} fill className='object-cover' sizes='(max-width: 768px) 100vw, 300px' />
+						<div className='relative w-full aspect-square sm:w-[400px] sm:h-[400px] flex-shrink-0'>
+							<Image src={product.imageUrl} alt={product.name} fill className='object-cover' sizes='(max-width: 768px) 100vw, 400px' />
 						</div>
 					)}
 
@@ -70,13 +62,11 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
 										))}
 									</ul>
 								)}
-
-								<QuantityCounter value={quantity} onIncrement={increment} onDecrement={decrement} />
 							</div>
 						</div>
 
 						<Button className='w-full mt-6' onClick={handleAddToCart} disabled={loading}>
-							{loading ? <Loader2 className='h-4 w-4 animate-spin' /> : `В корзину за ${(product.price * quantity).toFixed(2)} ₸`}
+							{loading ? <Loader2 className='h-4 w-4 animate-spin' /> : `В корзину за ${product.price.toFixed(2)} ₸`}
 						</Button>
 					</div>
 				</div>

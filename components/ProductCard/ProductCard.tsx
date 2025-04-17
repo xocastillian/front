@@ -13,6 +13,9 @@ interface ProductCardProps {
 	product: Product
 	onClick?: () => void
 	showAddToCart?: boolean
+	onAddToCart?: (product: Product) => void
+	isAdded?: boolean
+	isLoading?: boolean
 }
 
 export function ProductCard({ product, onClick, showAddToCart }: ProductCardProps) {

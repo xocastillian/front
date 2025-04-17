@@ -38,10 +38,6 @@ export default function Home() {
 	const cartItems = useCartStore(state => state.items)
 	const limit = 10
 
-	const isProductAdded = (productId: string) => {
-		return cartItems.some(item => item._id === productId)
-	}
-
 	const handleAddToCart = async (product: Product) => {
 		setAddingProductId(product._id)
 
@@ -124,7 +120,6 @@ export default function Home() {
 					onLoadMore={handleLoadMore}
 					hasMore={hasMore}
 					onAddToCart={handleAddToCart}
-					getIsAdded={isProductAdded}
 					addingProductId={addingProductId ?? undefined}
 				/>
 			) : (

@@ -16,7 +16,6 @@ interface ProductListProps {
 	isAdminPanel?: boolean
 	onAddProductClick?: () => void
 	onAddToCart?: (product: Product) => void
-	getIsAdded?: (productId: string) => boolean
 	addingProductId?: string
 }
 
@@ -29,7 +28,6 @@ export const ProductList = ({
 	onProductClick,
 	onAddProductClick,
 	onAddToCart,
-	getIsAdded,
 	addingProductId,
 }: ProductListProps) => {
 	const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
@@ -59,7 +57,6 @@ export const ProductList = ({
 								}
 							}}
 							onAddToCart={onAddToCart}
-							isAdded={getIsAdded?.(product._id)}
 							isLoading={addingProductId === product._id}
 							showAddToCart={!isAdminPanel}
 						/>
