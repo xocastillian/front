@@ -59,6 +59,18 @@
 		color: #666;
 	}
 
+	.priceBox {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		width: 100%;
+	}
+
+	.btn {
+		cursor: pointer;
+		width: 120px;
+	}
+
 	.price {
 		font-size: 20px;
 		font-weight: 700;

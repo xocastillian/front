@@ -10,6 +10,8 @@ import { fetchProducts } from '@/lib/api/products'
 import { SortBox } from '@/components/SortBox/SortBox'
 import { Input } from '@/components/ui/input'
 import { useDebounce } from '@/hooks/useDebounce'
+import { useCartStore, CartItem } from '@/stores/cart-store'
+import { toast } from 'sonner'
 
 const sortOptions = [
 	{ label: 'Без сортировки', value: '' },
@@ -28,8 +30,33 @@ export default function Home() {
 	const [hasMore, setHasMore] = useState(true)
 	const [search, setSearch] = useState('')
 	const debouncedSearch = useDebounce(search, 500)
-
+	const [addingProductId, setAddingProductId] = useState<string | null>(null)
+	const addToCart = useCartStore(state => state.addToCart)
+	const cartItems = useCartStore(state => state.items)
 	const limit = 10
+
+	const isProductAdded = (productId: string) => {
+		return cartItems.some(item => item._id === productId)
+	}
+
+	const handleAddToCart = async (product: Product) => {
+		setAddingProductId(product._id)
+
+		try {
+			const cartItem: CartItem = {
+				...product,
+				quantity: 1,
+				cartItemId: product._id,
+			}
+			await addToCart(cartItem)
+			toast.success('Товар добавлен в корзину')
+		} catch (err) {
+			console.error('Ошибка при добавлении в корзину:', err)
+			toast.error('Не удалось добавить товар')
+		} finally {
+			setAddingProductId(null)
+		}
+	}
 
 	const loadProducts = async (page: number, categoryId?: string, sort?: string, search?: string) => {
 		setLoading(true)
@@ -76,7 +103,7 @@ export default function Home() {
 	}, [page, selectedCategory, sort, debouncedSearch])
 
 	return (
-		<main className='px-4 py-8 max-w-7xl mx-auto'>
+		<main className='px-4 py-8 max-w-[1300px] mx-auto'>
 			<div className='flex flex-col gap-4 xl:flex-row xl:justify-between xl:items-center mb-6'>
 				<Tabs items={categories.map(c => ({ id: c._id, name: c.name }))} selected={selectedCategory} onSelect={handleTabClick} />
 
@@ -92,7 +119,15 @@ export default function Home() {
 				</div>
 			</div>
 
-			<ProductList products={products} loading={loading} onLoadMore={handleLoadMore} hasMore={hasMore} />
+			<ProductList
+				products={products}
+				loading={loading}
+				onLoadMore={handleLoadMore}
+				hasMore={hasMore}
+				onAddToCart={handleAddToCart}
+				getIsAdded={isProductAdded}
+				addingProductId={addingProductId ?? undefined}
+			/>
 		</main>
 	)
 }

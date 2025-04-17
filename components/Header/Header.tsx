@@ -82,9 +82,9 @@ export default function Header() {
 			<div className='sm:hidden'>
 				<Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
 					<SheetTrigger asChild>
-						<Button variant='ghost' size='icon'>
+						<button className='flex items-center justify-center'>
 							<Menu className='w-5 h-5' />
-						</Button>
+						</button>
 					</SheetTrigger>
 					<SheetContent side='right' className='w-full max-w-none'>
 						<SheetHeader>

@@ -16,9 +16,23 @@ interface ProductListProps {
 	onProductClick?: (product: Product) => void
 	isAdminPanel?: boolean
 	onAddProductClick?: () => void
+	onAddToCart?: (product: Product) => void
+	getIsAdded?: (productId: string) => boolean
+	addingProductId?: string
 }
 
-export const ProductList = ({ products, loading, onLoadMore, hasMore, isAdminPanel, onProductClick, onAddProductClick }: ProductListProps) => {
+export const ProductList = ({
+	products,
+	loading,
+	onLoadMore,
+	hasMore,
+	isAdminPanel,
+	onProductClick,
+	onAddProductClick,
+	onAddToCart,
+	getIsAdded,
+	addingProductId,
+}: ProductListProps) => {
 	const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
 
 	return (
@@ -33,7 +47,7 @@ export const ProductList = ({ products, loading, onLoadMore, hasMore, isAdminPan
 				</div>
 			)}
 			<div className='mt-5 flex justify-center'>
-				<div className='mx-auto mt-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-12'>
+				<div className='mt-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-12'>
 					{products.map(product => (
 						<ProductCard
 							key={product._id}
@@ -45,6 +59,10 @@ export const ProductList = ({ products, loading, onLoadMore, hasMore, isAdminPan
 									setSelectedProduct(product)
 								}
 							}}
+							onAddToCart={onAddToCart}
+							isAdded={getIsAdded?.(product._id)}
+							isLoading={addingProductId === product._id}
+							showAddToCart={!isAdminPanel}
 						/>
 					))}
 
