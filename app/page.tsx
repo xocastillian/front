@@ -15,6 +15,7 @@ import { toast } from 'sonner'
 import { Loader } from '@/components/Loader/Loader'
 import { Button } from '@/components/ui/button'
 import { ShoppingCart } from 'lucide-react'
+import { AnimatePresence, motion } from 'framer-motion'
 
 const sortOptions = [
 	{ label: 'Без сортировки', value: '' },
@@ -128,20 +129,28 @@ export default function Home() {
 				</div>
 			)}
 
-			<div className='sm:hidden fixed bottom-4 right-4 z-50'>
-				<Button
-					variant='secondary'
-					onClick={() => (window.location.href = '/cart')}
-					className='relative h-14 w-14 p-0 rounded-full shadow-lg backdrop-blur bg-white/80'
-				>
-					<ShoppingCart className='h-6 w-6' />
-					{cartItems.length > 0 && (
-						<span className='absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center'>
-							{cartItems.length}
-						</span>
-					)}
-				</Button>
-			</div>
+			<AnimatePresence>
+				{cartItems.length > 0 && (
+					<motion.div
+						className='sm:hidden fixed bottom-4 right-4 z-50'
+						initial={{ opacity: 0, scale: 0.8, y: 20 }}
+						animate={{ opacity: 1, scale: 1, y: 0 }}
+						exit={{ opacity: 0, scale: 0.8, y: 20 }}
+						transition={{ duration: 0.2 }}
+					>
+						<Button
+							variant='secondary'
+							onClick={() => (window.location.href = '/cart')}
+							className='relative h-14 w-14 p-0 rounded-full shadow-lg backdrop-blur bg-white/80'
+						>
+							<ShoppingCart className='h-6 w-6' />
+							<span className='absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center'>
+								{cartItems.length}
+							</span>
+						</Button>
+					</motion.div>
+				)}
+			</AnimatePresence>
 		</main>
 	)
 }
