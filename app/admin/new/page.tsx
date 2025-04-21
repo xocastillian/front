@@ -14,6 +14,7 @@ import { toast } from 'sonner'
 import { Loader } from '@/components/Loader/Loader'
 import { useAuthGuard } from '@/hooks/useAuthGuard'
 import { useOrderNotificationStore } from '@/stores/order-notification-store'
+import { getSocket } from '@/lib/api/ordersSocket'
 
 export default function AdminPanelPage() {
 	useAuthGuard('admin')
@@ -54,9 +55,6 @@ export default function AdminPanelPage() {
 	}, [])
 
 	useEffect(() => {
-		const local = localStorage.getItem('has_new_order') === '1'
-		setHasNewOrder(local)
-
 		function handleStorage(event: StorageEvent) {
 			if (event.key === 'has_new_order') {
 				setHasNewOrder(event.newValue === '1')
@@ -66,6 +64,19 @@ export default function AdminPanelPage() {
 		window.addEventListener('storage', handleStorage)
 		return () => {
 			window.removeEventListener('storage', handleStorage)
+		}
+	}, [setHasNewOrder])
+
+	useEffect(() => {
+		const socket = getSocket()
+
+		function handleNewOrder(order: Order) {
+			setOrders(prev => [order, ...prev])
+		}
+
+		socket.on('order:new', handleNewOrder)
+		return () => {
+			socket.off('order:new', handleNewOrder)
 		}
 	}, [])
 
@@ -150,7 +161,11 @@ export default function AdminPanelPage() {
 			setOrders(prev => prev.map(o => (o._id === updatedOrder._id ? { ...o, status: updatedOrder.status } : o)))
 			toast.success('Статус заказа обновлён')
 
-			const stillHasPending = orders.some(o => (o._id !== updatedOrder._id ? o.status === OrderStatus.Pending : status === OrderStatus.Pending))
+			const stillHasPending = [...orders]
+				.map(o => {
+					return o._id === updatedOrder._id ? updatedOrder : o
+				})
+				.some(o => o.status === OrderStatus.Pending)
 
 			if (!stillHasPending) {
 				localStorage.removeItem('has_new_order')

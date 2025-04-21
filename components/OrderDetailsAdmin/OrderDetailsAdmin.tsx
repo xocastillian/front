@@ -17,7 +17,7 @@ interface OrderDetailsDialogProps {
 	trigger: ReactNode
 }
 
-export function OrderDetails({ order, open, onOpenChange, onStatusChange, loading, trigger }: OrderDetailsDialogProps) {
+export function OrderDetailsAdmin({ order, open, onOpenChange, onStatusChange, loading, trigger }: OrderDetailsDialogProps) {
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
 			<DialogTrigger asChild>{trigger}</DialogTrigger>

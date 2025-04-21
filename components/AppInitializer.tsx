@@ -18,7 +18,10 @@ export function AppInitializer() {
 	useEffect(() => {
 		initialize()
 		useCartStore.getState().loadFromStorage()
-	}, [initialize])
+
+		const local = localStorage.getItem('has_new_order') === '1'
+		setHasNewOrder(local)
+	}, [initialize, setHasNewOrder])
 
 	useEffect(() => {
 		if (isAuthenticated) {

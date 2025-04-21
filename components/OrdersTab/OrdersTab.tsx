@@ -2,11 +2,9 @@
 
 import { useState } from 'react'
 import { Order, OrderStatus } from '@/types'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { format } from 'date-fns'
 import { Tabs } from '../Tabs/Tabs'
-import { OrderDetails } from '../OrderDetails/OrderDetails'
-import { getOrderStatusColor } from '@/utils'
+import { OrderCardAdmin } from '../OrderCardAdmin/OrderCardAdmin'
+import { OrderDetailsAdmin } from '../OrderDetailsAdmin/OrderDetailsAdmin'
 
 interface OrdersTabProps {
 	orders: Order[]
@@ -52,7 +50,7 @@ export const OrdersTab = ({ orders, onUpdateOrderStatus }: OrdersTabProps) => {
 						const isOpen = selectedOrder?._id === order._id
 
 						return (
-							<OrderDetails
+							<OrderDetailsAdmin
 								key={order._id}
 								order={order}
 								open={isOpen}
@@ -62,17 +60,7 @@ export const OrdersTab = ({ orders, onUpdateOrderStatus }: OrdersTabProps) => {
 								}}
 								onStatusChange={status => handleStatusChange(order._id, status)}
 								loading={loading}
-								trigger={
-									<Card className={`${getOrderStatusColor(order.status)} cursor-pointer hover:shadow-md transition`}>
-										<CardHeader>
-											<CardTitle className='text-base'>Заказ № {order.orderNumber}</CardTitle>
-										</CardHeader>
-										<CardContent className='text-sm text-muted-foreground space-y-1'>
-											<div>Сумма: {order.totalPrice} ₸</div>
-											<div>Дата: {format(new Date(order.createdAt), 'dd.MM.yyyy HH:mm')}</div>
-										</CardContent>
-									</Card>
-								}
+								trigger={<OrderCardAdmin order={order} />}
 							/>
 						)
 					})}
