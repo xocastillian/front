@@ -22,3 +22,14 @@ export async function fetchAllOrdersForAdmin(): Promise<Order[]> {
 	const res = await api.get('/orders/admin')
 	return res.data
 }
+
+export async function fetchHasNewOrdersForAdmin(): Promise<boolean> {
+	const user = useAuthStore.getState().user
+
+	if (!user || user.role !== 'admin') {
+		return false
+	}
+
+	const res = await api.get('/orders/admin/has-new')
+	return res.data.hasNew
+}

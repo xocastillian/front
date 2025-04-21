@@ -3,11 +3,20 @@ import { Product, RawCartItem } from '@/types'
 import api from '@/lib/api/axios'
 import { useAuthStore } from './auth-store'
 import { OrderFormData } from '@/lib/validation/orderSchema'
-import { useGuestOrdersStore } from './orders-store'
+import { ensureGuestUserId } from '@/utils'
 
 export interface CartItem extends Product {
 	quantity: number
 	cartItemId: string
+}
+
+export type CreateOrderRequest = OrderFormData & {
+	items: {
+		productId: string
+		quantity: number
+		price: number
+	}[]
+	userId?: string
 }
 
 interface CartState {
@@ -155,7 +164,7 @@ export const useCartStore = create<CartState>((set, get) => ({
 	createOrder: async (data: OrderFormData) => {
 		const items = get().items
 
-		const orderDto = {
+		const orderDto: CreateOrderRequest = {
 			items: items.map(item => ({
 				productId: item._id,
 				quantity: item.quantity,
@@ -164,26 +173,14 @@ export const useCartStore = create<CartState>((set, get) => ({
 			...data,
 		}
 
-		try {
-			const res = await api.post('/orders', orderDto)
-			get().clearCart()
+		const isAuth = useAuthStore.getState().isAuthenticated
+		if (!isAuth) {
+			orderDto.userId = ensureGuestUserId()
+		}
 
-			const isAuth = useAuthStore.getState().isAuthenticated
-			if (!isAuth) {
-				const fullOrder = {
-					...res.data,
-					items: items.map(i => ({
-						productId: {
-							_id: i._id,
-							name: i.name,
-							imageUrl: i.imageUrl,
-						},
-						quantity: i.quantity,
-						price: i.price,
-					})),
-				}
-				useGuestOrdersStore.getState().addOrder(fullOrder)
-			}
+		try {
+			await api.post('/orders', orderDto)
+			await get().clearCart()
 		} catch (err) {
 			console.error('Ошибка при оформлении заказа:', err)
 			throw err

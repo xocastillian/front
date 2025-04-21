@@ -13,7 +13,7 @@ import { OrdersTab } from '@/components/OrdersTab/OrdersTab'
 import { toast } from 'sonner'
 import { Loader } from '@/components/Loader/Loader'
 import { useAuthGuard } from '@/hooks/useAuthGuard'
-import { getSocket } from '@/lib/api/ordersSocket'
+import { useOrderNotificationStore } from '@/stores/order-notification-store'
 
 export default function AdminPanelPage() {
 	useAuthGuard('admin')
@@ -25,7 +25,8 @@ export default function AdminPanelPage() {
 	const [products, setProducts] = useState<Product[]>([])
 	const [orders, setOrders] = useState<Order[]>([])
 	const [activeSection, setActiveSection] = useState<'create' | 'orders'>('create')
-	const [hasNewOrder, setHasNewOrder] = useState(false)
+	const hasNewOrder = useOrderNotificationStore(state => state.hasNewOrder)
+	const setHasNewOrder = useOrderNotificationStore(state => state.setHasNewOrder)
 
 	useEffect(() => {
 		setLoadingProducts(true)
@@ -53,26 +54,8 @@ export default function AdminPanelPage() {
 	}, [])
 
 	useEffect(() => {
-		if (typeof window !== 'undefined') {
-			const socket = getSocket()
-
-			const handleNewOrder = (order: Order) => {
-				localStorage.setItem('has_new_order', '1')
-				setHasNewOrder(true)
-				setOrders(prev => [order, ...prev])
-			}
-
-			socket.on('order:new', handleNewOrder)
-
-			return () => {
-				socket.off('order:new', handleNewOrder)
-			}
-		}
-	}, [])
-
-	useEffect(() => {
-		const hasNew = localStorage.getItem('has_new_order') === '1'
-		setHasNewOrder(hasNew)
+		const local = localStorage.getItem('has_new_order') === '1'
+		setHasNewOrder(local)
 
 		function handleStorage(event: StorageEvent) {
 			if (event.key === 'has_new_order') {
@@ -85,13 +68,6 @@ export default function AdminPanelPage() {
 			window.removeEventListener('storage', handleStorage)
 		}
 	}, [])
-
-	useEffect(() => {
-		if (activeSection === 'orders') {
-			setHasNewOrder(false)
-			localStorage.removeItem('has_new_order')
-		}
-	}, [activeSection])
 
 	const handleProductSubmit = async (data: ProductFormData) => {
 		setLoadingProduct(true)
@@ -173,6 +149,13 @@ export default function AdminPanelPage() {
 			const updatedOrder = await updateOrderStatus(orderId, status)
 			setOrders(prev => prev.map(o => (o._id === updatedOrder._id ? { ...o, status: updatedOrder.status } : o)))
 			toast.success('Статус заказа обновлён')
+
+			const stillHasPending = orders.some(o => (o._id !== updatedOrder._id ? o.status === OrderStatus.Pending : status === OrderStatus.Pending))
+
+			if (!stillHasPending) {
+				localStorage.removeItem('has_new_order')
+				setHasNewOrder(false)
+			}
 		} catch (err) {
 			console.error('Ошибка при обновлении статуса заказа:', err)
 			toast.error('Не удалось обновить статус')

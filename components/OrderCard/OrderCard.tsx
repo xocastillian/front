@@ -20,7 +20,8 @@ export const OrderCard: FC<OrderCardProps> = ({ order }) => {
 					<span className='text-xs text-muted-foreground'>
 						{new Date(order.createdAt).toLocaleString('ru-RU', {
 							day: '2-digit',
-							year: 'numeric',
+							month: '2-digit',
+							year: '2-digit',
 							hour: '2-digit',
 							minute: '2-digit',
 						})}

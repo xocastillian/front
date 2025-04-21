@@ -51,8 +51,3 @@ export async function loginUser(data: LoginFormData, form?: ReturnType<typeof us
 		return false
 	}
 }
-
-export function getTokenFromStorage(): string | null {
-	if (typeof window === 'undefined') return null
-	return localStorage.getItem('token')
-}
